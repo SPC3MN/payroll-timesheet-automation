@@ -1,0 +1,9 @@
+App:
+  Properties:
+    StartScreen: =Screen1
+    Formulas: |-
+      =colEmployees = Table(
+        {Name: "Employee 1"},
+        {Name: "Employee 2"},
+        {Name: "Employee 3"}
+      );

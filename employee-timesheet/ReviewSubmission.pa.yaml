@@ -1,0 +1,661 @@
+Screens:
+  ReviewSubmission:
+    Properties:
+      OnVisible: |-
+        =UpdateContext({varSubmissionConfirmed: false})
+    Children:
+      - revRoot:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            Width: =Parent.Width
+            Height: =Parent.Height
+            LayoutMinWidth: =0
+            LayoutMinHeight: =0
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutGap: =16
+            PaddingTop: =16
+            PaddingBottom: =24
+            PaddingLeft: =16
+            PaddingRight: =16
+            Fill: =RGBA(244,246,249,1)
+          Children:
+            - revPageTitle:
+                Control: ModernText
+                Properties:
+                  Text: ="Review & Submit"
+                  Color: =RGBA(30,41,63,1)
+                  Size: =24
+                  FontWeight: =FontWeight.Bold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =36
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  FillPortions: =0
+                  AlignInContainer: =AlignInContainer.Stretch
+                  AccessibleLabel: ="Review and submit page title"
+            - revConfirmationBanner:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  PaddingTop: =16
+                  PaddingBottom: =16
+                  PaddingLeft: =16
+                  PaddingRight: =16
+                  LayoutMinWidth: =0
+                  LayoutMinHeight: =0
+                  Height: =128
+                  FillPortions: =0
+                  AlignInContainer: =AlignInContainer.Stretch
+                  Fill: =RGBA(220,252,231,1)
+                  DropShadow: =DropShadow.Light
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  Visible: =varSubmissionConfirmed
+                Children:
+                  - lblConfirmationMessage:
+                      Control: ModernText
+                      Properties:
+                        Text: '="Timesheet for " & cmbEmployee.Selected.Name & " submitted and saved to Excel. Confirmation #" & Left(varLastSubmission.SubmissionId, 8) & "."'
+                        Color: =RGBA(21,128,61,1)
+                        Size: =15
+                        FontWeight: =FontWeight.Semibold
+                        Wrap: =true
+                        AutoHeight: =true
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Submission confirmation message"
+            - revSummaryCard:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutGap: =8
+                  PaddingTop: =20
+                  PaddingBottom: =20
+                  PaddingLeft: =20
+                  PaddingRight: =20
+                  LayoutMinWidth: =0
+                  LayoutMinHeight: =0
+                  Height: =128
+                  FillPortions: =0
+                  AlignInContainer: =AlignInContainer.Stretch
+                  Fill: =RGBA(255,255,255,1)
+                  DropShadow: =DropShadow.Light
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                Children:
+                  - lblReviewEmployee:
+                      Control: ModernText
+                      Properties:
+                        Text: '="Employee: " & cmbEmployee.Selected.Name'
+                        Color: =RGBA(30,41,59,1)
+                        Size: =16
+                        FontWeight: =FontWeight.Semibold
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Employee name"
+                  - lblReviewPayPeriod:
+                      Control: ModernText
+                      Properties:
+                        Text: '="Pay Period: " & Text(dpPayPeriodStart.SelectedDate,"mmmm d, yyyy") & " – " & Text(dpPayPeriodStart.SelectedDate+13,"mmmm d, yyyy")'
+                        Color: =RGBA(30,41,59,1)
+                        Size: =15
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =true
+                        AutoHeight: =true
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Pay period date range"
+            - revWeek1Card:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutGap: =8
+                  PaddingTop: =16
+                  PaddingBottom: =16
+                  PaddingLeft: =12
+                  PaddingRight: =12
+                  LayoutMinWidth: =0
+                  LayoutMinHeight: =0
+                  Height: =316
+                  FillPortions: =0
+                  AlignInContainer: =AlignInContainer.Stretch
+                  Fill: =RGBA(219,234,254,0.5)
+                  DropShadow: =DropShadow.Light
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                Children:
+                  - lblReviewWeek1Header:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Week 1"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =20
+                        FontWeight: =FontWeight.Bold
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =32
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Week 1 section header"
+                  - lblReviewMon1:
+                      Control: ModernText
+                      Properties:
+                        Text: =Text(dpPayPeriodStart.SelectedDate + 0, "dddd, mmmm d") & " — " & Text(txtMon1Hours.Value, "0.#") & " hrs"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =14
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Monday week 1 date and hours"
+                  - lblReviewTue1:
+                      Control: ModernText
+                      Properties:
+                        Text: =Text(dpPayPeriodStart.SelectedDate + 1, "dddd, mmmm d") & " — " & Text(txtTue1Hours.Value, "0.#") & " hrs"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =14
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Tuesday week 1 date and hours"
+                  - lblReviewWed1:
+                      Control: ModernText
+                      Properties:
+                        Text: =Text(dpPayPeriodStart.SelectedDate + 2, "dddd, mmmm d") & " — " & Text(txtWed1Hours.Value, "0.#") & " hrs"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =14
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Wednesday week 1 date and hours"
+                  - lblReviewThu1:
+                      Control: ModernText
+                      Properties:
+                        Text: =Text(dpPayPeriodStart.SelectedDate + 3, "dddd, mmmm d") & " — " & Text(txtThu1Hours.Value, "0.#") & " hrs"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =14
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Thursday week 1 date and hours"
+                  - lblReviewFri1:
+                      Control: ModernText
+                      Properties:
+                        Text: =Text(dpPayPeriodStart.SelectedDate + 4, "dddd, mmmm d") & " — " & Text(txtFri1Hours.Value, "0.#") & " hrs"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =14
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Friday week 1 date and hours"
+                  - lblReviewSat1:
+                      Control: ModernText
+                      Properties:
+                        Text: =Text(dpPayPeriodStart.SelectedDate + 5, "dddd, mmmm d") & " — " & Text(txtSat1Hours.Value, "0.#") & " hrs"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =14
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Saturday week 1 date and hours"
+                  - lblReviewSun1:
+                      Control: ModernText
+                      Properties:
+                        Text: =Text(dpPayPeriodStart.SelectedDate + 6, "dddd, mmmm d") & " — " & Text(txtSun1Hours.Value, "0.#") & " hrs"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =14
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Sunday week 1 date and hours"
+            - revWeek2Card:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutGap: =8
+                  PaddingTop: =16
+                  PaddingBottom: =16
+                  PaddingLeft: =12
+                  PaddingRight: =12
+                  LayoutMinWidth: =0
+                  LayoutMinHeight: =0
+                  Height: =316
+                  FillPortions: =0
+                  AlignInContainer: =AlignInContainer.Stretch
+                  Fill: =RGBA(254,243,199,0.5)
+                  DropShadow: =DropShadow.Light
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                Children:
+                  - lblReviewWeek2Header:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Week 2"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =20
+                        FontWeight: =FontWeight.Bold
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =32
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Week 2 section header"
+                  - lblReviewMon2:
+                      Control: ModernText
+                      Properties:
+                        Text: =Text(dpPayPeriodStart.SelectedDate + 7, "dddd, mmmm d") & " — " & Text(txtMon2Hours.Value, "0.#") & " hrs"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =14
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Monday week 2 date and hours"
+                  - lblReviewTue2:
+                      Control: ModernText
+                      Properties:
+                        Text: =Text(dpPayPeriodStart.SelectedDate + 8, "dddd, mmmm d") & " — " & Text(txtTue2Hours.Value, "0.#") & " hrs"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =14
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Tuesday week 2 date and hours"
+                  - lblReviewWed2:
+                      Control: ModernText
+                      Properties:
+                        Text: =Text(dpPayPeriodStart.SelectedDate + 9, "dddd, mmmm d") & " — " & Text(txtWed2Hours.Value, "0.#") & " hrs"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =14
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Wednesday week 2 date and hours"
+                  - lblReviewThu2:
+                      Control: ModernText
+                      Properties:
+                        Text: =Text(dpPayPeriodStart.SelectedDate + 10, "dddd, mmmm d") & " — " & Text(txtThu2Hours.Value, "0.#") & " hrs"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =14
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Thursday week 2 date and hours"
+                  - lblReviewFri2:
+                      Control: ModernText
+                      Properties:
+                        Text: =Text(dpPayPeriodStart.SelectedDate + 11, "dddd, mmmm d") & " — " & Text(txtFri2Hours.Value, "0.#") & " hrs"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =14
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Friday week 2 date and hours"
+                  - lblReviewSat2:
+                      Control: ModernText
+                      Properties:
+                        Text: =Text(dpPayPeriodStart.SelectedDate + 12, "dddd, mmmm d") & " — " & Text(txtSat2Hours.Value, "0.#") & " hrs"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =14
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Saturday week 2 date and hours"
+                  - lblReviewSun2:
+                      Control: ModernText
+                      Properties:
+                        Text: =Text(dpPayPeriodStart.SelectedDate + 13, "dddd, mmmm d") & " — " & Text(txtSun2Hours.Value, "0.#") & " hrs"
+                        Color: =RGBA(30,41,59,1)
+                        Size: =14
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Sunday week 2 date and hours"
+            - revTotalsCard:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutGap: =8
+                  PaddingTop: =20
+                  PaddingBottom: =20
+                  PaddingLeft: =20
+                  PaddingRight: =20
+                  LayoutMinWidth: =0
+                  LayoutMinHeight: =0
+                  Height: =148
+                  FillPortions: =0
+                  AlignInContainer: =AlignInContainer.Stretch
+                  Fill: =RGBA(255,255,255,1)
+                  DropShadow: =DropShadow.Light
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                Children:
+                  - lblReviewWeek1Total:
+                      Control: ModernText
+                      Properties:
+                        Text: '="Week 1 Total: " & Text(txtMon1Hours.Value + txtTue1Hours.Value + txtWed1Hours.Value + txtThu1Hours.Value + txtFri1Hours.Value + txtSat1Hours.Value + txtSun1Hours.Value, "0.0")'
+                        Color: =RGBA(30,41,59,1)
+                        Size: =16
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Week 1 total hours"
+                  - lblReviewWeek2Total:
+                      Control: ModernText
+                      Properties:
+                        Text: '="Week 2 Total: " & Text(txtMon2Hours.Value + txtTue2Hours.Value + txtWed2Hours.Value + txtThu2Hours.Value + txtFri2Hours.Value + txtSat2Hours.Value + txtSun2Hours.Value, "0.0")'
+                        Color: =RGBA(30,41,59,1)
+                        Size: =16
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =28
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Week 2 total hours"
+                  - lblReviewTotalHours:
+                      Control: ModernText
+                      Properties:
+                        Text: '="Total Hours: " & Text((txtMon1Hours.Value + txtTue1Hours.Value + txtWed1Hours.Value + txtThu1Hours.Value + txtFri1Hours.Value + txtSat1Hours.Value + txtSun1Hours.Value) + (txtMon2Hours.Value + txtTue2Hours.Value + txtWed2Hours.Value + txtThu2Hours.Value + txtFri2Hours.Value + txtSat2Hours.Value + txtSun2Hours.Value), "0.0")'
+                        Color: =RGBA(30,41,59,1)
+                        Size: =20
+                        FontWeight: =FontWeight.Bold
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =36
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Total hours for the pay period"
+            - revCommentsCard:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutGap: =8
+                  PaddingTop: =20
+                  PaddingBottom: =20
+                  PaddingLeft: =20
+                  PaddingRight: =20
+                  LayoutMinWidth: =0
+                  LayoutMinHeight: =0
+                  Height: =128
+                  FillPortions: =0
+                  AlignInContainer: =AlignInContainer.Stretch
+                  Fill: =RGBA(255,255,255,1)
+                  DropShadow: =DropShadow.Light
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                Children:
+                  - lblReviewCommentsCaption:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Comments / Notes"
+                        Color: =RGBA(100,116,139,1)
+                        Size: =13
+                        FontWeight: =FontWeight.Semibold
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =20
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Comments and notes label"
+                  - lblReviewCommentsValue:
+                      Control: ModernText
+                      Properties:
+                        Text: =If(IsBlank(Trim(txtCommentsNotes.Text)), "(No comments entered)", txtCommentsNotes.Text)
+                        Color: =RGBA(30,41,59,1)
+                        Size: =15
+                        FontWeight: =FontWeight.Normal
+                        Wrap: =true
+                        AutoHeight: =true
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        FillPortions: =0
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Comments or notes value"
+            - revButtonRow:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutGap: =12
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  LayoutMinWidth: =0
+                  LayoutMinHeight: =0
+                  Height: =52
+                  FillPortions: =0
+                  AlignInContainer: =AlignInContainer.Stretch
+                Children:
+                  - btnEdit:
+                      Control: ModernButton
+                      Properties:
+                        Text: ="Edit"
+                        Appearance: =ButtonAppearance.Secondary
+                        Color: =RGBA(30,41,63,1)
+                        Size: =16
+                        Height: =52
+                        FillPortions: =1
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Edit timesheet"
+                        OnSelect: =Navigate(Screen1, ScreenTransition.None)
+                  - btnSubmit:
+                      Control: ModernButton
+                      Properties:
+                        Text: ="Submit"
+                        Appearance: =ButtonAppearance.Primary
+                        BasePaletteColor: =RGBA(30,41,63,1)
+                        Color: =RGBA(255,255,255,1)
+                        Size: =16
+                        Height: =52
+                        FillPortions: =1
+                        AlignInContainer: =AlignInContainer.Stretch
+                        AccessibleLabel: ="Submit timesheet"
+                        OnSelect: |-
+                          =UpdateContext(
+                            {
+                              varLastSubmission: Patch(
+                                TimesheetSubmissions,
+                                Defaults(TimesheetSubmissions),
+                                {
+                                  SubmissionId: Text(GUID()),
+                                  Employee: cmbEmployee.Selected.Name,
+                                  PayPeriodStart: dpPayPeriodStart.SelectedDate,
+                                  PayPeriodEnd: dpPayPeriodStart.SelectedDate + 13,
+                                  Mon1Hours: Text(txtMon1Hours.Value, "0.0"),
+                                  Tue1Hours: Text(txtTue1Hours.Value, "0.0"),
+                                  Wed1Hours: Text(txtWed1Hours.Value, "0.0"),
+                                  Thu1Hours: Text(txtThu1Hours.Value, "0.0"),
+                                  Fri1Hours: Text(txtFri1Hours.Value, "0.0"),
+                                  Sat1Hours: Text(txtSat1Hours.Value, "0.0"),
+                                  Sun1Hours: Text(txtSun1Hours.Value, "0.0"),
+                                  Mon2Hours: Text(txtMon2Hours.Value, "0.0"),
+                                  Tue2Hours: Text(txtTue2Hours.Value, "0.0"),
+                                  Wed2Hours: Text(txtWed2Hours.Value, "0.0"),
+                                  Thu2Hours: Text(txtThu2Hours.Value, "0.0"),
+                                  Fri2Hours: Text(txtFri2Hours.Value, "0.0"),
+                                  Sat2Hours: Text(txtSat2Hours.Value, "0.0"),
+                                  Sun2Hours: Text(txtSun2Hours.Value, "0.0"),
+                                  Week1Total: Text(txtMon1Hours.Value + txtTue1Hours.Value + txtWed1Hours.Value + txtThu1Hours.Value + txtFri1Hours.Value + txtSat1Hours.Value + txtSun1Hours.Value, "0.0"),
+                                  Week2Total: Text(txtMon2Hours.Value + txtTue2Hours.Value + txtWed2Hours.Value + txtThu2Hours.Value + txtFri2Hours.Value + txtSat2Hours.Value + txtSun2Hours.Value, "0.0"),
+                                  TotalHours: Text((txtMon1Hours.Value + txtTue1Hours.Value + txtWed1Hours.Value + txtThu1Hours.Value + txtFri1Hours.Value + txtSat1Hours.Value + txtSun1Hours.Value) + (txtMon2Hours.Value + txtTue2Hours.Value + txtWed2Hours.Value + txtThu2Hours.Value + txtFri2Hours.Value + txtSat2Hours.Value + txtSun2Hours.Value), "0.0"),
+                                  Comments: txtCommentsNotes.Text,
+                                  SubmittedDate: Now()
+                                }
+                              )
+                            }
+                          );
+                          UpdateContext({varSubmissionConfirmed: true});
+                          Notify("Timesheet submitted and saved to Excel.", NotificationType.Success)

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f4f5f7; --card: #ffffff; --text: #1c1f24; --muted: #5f6670; --line: #dcdfe3;
+    --field: #ffffff; --weekend: #eef0f3; --accent: #1a73e8; --accent-text: #ffffff;
+    --error: #c5221f; --warn: #a15c00; --ok: #188038;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 16px 16px 110px; }
+  h1 { font-size: 22px; margin: 6px 4px 2px; }
+  .sub { color: var(--muted); margin: 0 4px 14px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px; margin-bottom: 12px;
+  }
+  input, textarea {
+    font: inherit; font-size: 16px; color: var(--text); background: var(--field);
+    border: 1px solid var(--line); border-radius: 8px; padding: 10px;
+  }
+  input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  input.bad { border-color: var(--error); outline-color: var(--error); color: var(--error); }
+  .field { display: block; font-size: 14px; color: var(--muted); }
+  .field + .field { margin-top: 12px; }
+  .field input { display: block; width: 100%; margin-top: 4px; }
+  .period-row { display: flex; gap: 8px; margin-top: 4px; }
+  .period-row input { flex: 1; width: auto; min-width: 0; margin: 0; }
+  .step {
+    flex: none; width: 44px; border: 1px solid var(--line); border-radius: 8px;
+    background: var(--field); color: var(--accent); font: inherit; font-size: 20px; line-height: 1;
+  }
+  .hint { font-size: 14px; margin: 8px 0 0; color: var(--muted); }
+  .hint.warn { color: var(--warn); }
+
+  .emp-head { display: flex; gap: 8px; margin-bottom: 12px; }
+  .emp-head .name { flex: 1; min-width: 0; font-weight: 600; }
+  .remove {
+    flex: none; min-width: 44px; height: 44px; padding: 0 10px; border-radius: 8px;
+    border: 1px solid var(--line); background: transparent; color: var(--muted); font: inherit;
+  }
+  .remove.armed { color: var(--error); border-color: var(--error); }
+  .week + .week { margin-top: 12px; }
+  .week-label { font-size: 13px; font-weight: 600; margin: 0 2px 4px; }
+  .week-label .range { font-weight: 400; color: var(--muted); }
+  .days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+  .day { display: flex; flex-direction: column; align-items: center; font-size: 12px; color: var(--muted); }
+  .day .dn { min-height: 1.2em; }
+  .day input { width: 100%; padding: 10px 0; margin-top: 2px; text-align: center; }
+  .day.weekend input { background: var(--weekend); }
+  details.comment { margin-top: 12px; font-size: 14px; }
+  details.comment summary { color: var(--accent); cursor: pointer; padding: 4px 2px; }
+  details.comment textarea { display: block; width: 100%; margin-top: 6px; resize: vertical; }
+  .totals {
+    display: grid; grid-template-columns: 1fr 1fr 1.3fr; margin-top: 12px; padding-top: 10px;
+    border-top: 1px solid var(--line); text-align: center;
+  }
+  .totals span { display: block; font-size: 12px; color: var(--muted); }
+  .totals strong { font-size: 18px; font-variant-numeric: tabular-nums; }
+  .totals .tp { color: var(--accent); }
+
+  .add {
+    width: 100%; min-height: 52px; border: 1.5px dashed var(--line); border-radius: 12px;
+    background: transparent; color: var(--accent); font: inherit; font-weight: 600;
+  }
+  .add:disabled { color: var(--muted); }
+  .note { font-size: 14px; color: var(--muted); margin: 0 4px 12px; }
+  .note button { border: 0; background: none; color: var(--accent); font: inherit; padding: 0; text-decoration: underline; }
+
+  .bar {
+    position: fixed; left: 0; right: 0; bottom: 0; background: var(--card);
+    border-top: 1px solid var(--line); padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+  .bar-inner { max-width: 640px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+  .grand { flex: 1; min-width: 0; }
+  .grand span { display: block; font-size: 12px; color: var(--muted); }
+  .grand strong { font-size: 20px; font-variant-numeric: tabular-nums; }
+  .msg { color: var(--error); font-size: 14px; max-width: 640px; margin: 0 auto 8px; }
+  .msg:empty { display: none; }
+  .primary {
+    min-height: 48px; padding: 0 22px; border: 0; border-radius: 10px;
+    background: var(--accent); color: var(--accent-text); font: inherit; font-weight: 600;
+  }
+  .primary:disabled { opacity: .6; }
+  .done { text-align: center; padding: 48px 16px; }
+  .done .tick { font-size: 44px; color: var(--ok); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="title"></h1>
+  <p class="sub" id="subtitle"></p>
+
+  <div id="form">
+    <section class="card">
+      <label class="field" id="clientField">Client / company name
+        <input id="client" autocomplete="organization">
+      </label>
+      <div class="field">
+        <label for="period">Pay period start</label>
+        <div class="period-row">
+          <button type="button" class="step" id="prevPeriod" aria-label="Previous pay period">‹</button>
+          <input id="period" type="date">
+          <button type="button" class="step" id="nextPeriod" aria-label="Next pay period">›</button>
+        </div>
+      </div>
+      <p class="hint" id="periodHint"></p>
+    </section>
+    <p class="note" id="draftNote" hidden>
+      Restored your unsubmitted entries. <button type="button" id="clearDraft">Start over</button>
+    </p>
+    <div id="employees"></div>
+    <button type="button" class="add" id="addEmployee">+ Add employee</button>
+  </div>
+
+  <div class="done card" id="done" hidden>
+    <div class="tick">✓</div>
+    <h2>Hours submitted</h2>
+    <p id="doneSummary"></p>
+    <button type="button" class="primary" id="another">Submit another timesheet</button>
+  </div>
+
+  <div class="card" id="blocked" hidden></div>
+</div>
+
+<footer class="bar" id="bar">
+  <p class="msg" id="msg" role="alert"></p>
+  <div class="bar-inner">
+    <div class="grand"><span id="grandLabel">All employees</span><strong id="grand">0 h</strong></div>
+    <button type="button" class="primary" id="submit">Submit hours</button>
+  </div>
+</footer>
+
+<script>
+  const BOOT = <?!= boot ?>;
+  const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const DRAFT_KEY = 'timesheet-draft:' + (BOOT.token || 'blank');
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+
+  /** "8", "7.5", "7,5" and "7:30" are all accepted. Blank = 0. NaN = invalid. */
+  function parseHours(raw) {
+    const s = raw.trim().replace(',', '.');
+    if (!s) return 0;
+    const hm = /^(\d{1,2}):([0-5]\d)$/.exec(s);
+    if (hm) return +hm[1] + hm[2] / 60;
+    return /^\d{0,2}(\.\d+)?$/.test(s) ? parseFloat(s) : NaN;
+  }
+  const round2 = n => Math.round(n * 100) / 100;
+  const fmt = n => round2(n) + ' h';
+
+  // --- Dates (all local, day precision) ---
+  function parseIso(s) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+    if (!m) return null;
+    const d = new Date(+m[1], m[2] - 1, +m[3]);
+    return d.getDate() === +m[3] ? d : null;
+  }
+  const pad = n => String(n).padStart(2, '0');
+  const isoDate = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  function addDays(date, n) { const d = new Date(date); d.setDate(d.getDate() + n); return d; }
+  const daysBetween = (a, b) => Math.round((b - a) / 86400000);
+  const shortDate = d => `${MONTHS[d.getMonth()]} ${d.getDate()}`;
+  const longDate = d => `${WEEKDAYS[d.getDay()]}, ${shortDate(d)}`;
+  function today() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+
+  const anchor = () => parseIso(BOOT.anchor);
+  const periodStart = () => parseIso($('#period').value);
+  const onSchedule = d => ((daysBetween(anchor(), d) % 14) + 14) % 14 === 0;
+
+  /** The latest period on the client's schedule that has ended (or ends today). */
+  function defaultPeriod() {
+    const a = anchor();
+    if (!a) return '';
+    const n = Math.floor((daysBetween(a, today()) - 13) / 14);
+    return isoDate(addDays(a, 14 * n));
+  }
+
+  function stepPeriod(direction) {
+    const base = periodStart() || parseIso(defaultPeriod()) || today();
+    $('#period').value = isoDate(addDays(base, 14 * direction));
+    refresh();
+  }
+
+  // Weekday labels, dates and weekend shading are filled in by refresh() from the start date.
+  const DAY_CELL = '<label class="day"><span class="dl"></span><span class="dn"></span>' +
+      '<input class="hrs" inputmode="decimal" enterkeyhint="next" autocomplete="off"></label>';
+
+  function employeeCard(emp) {
+    const card = document.createElement('section');
+    card.className = 'card emp';
+    card.innerHTML = `
+      <div class="emp-head">
+        <input class="name" placeholder="Employee name" aria-label="Employee name" autocomplete="off">
+        <button type="button" class="remove" aria-label="Remove employee">✕</button>
+      </div>
+      ${[1, 2].map(week => `
+        <div class="week">
+          <div class="week-label">Week ${week} <span class="range"></span></div>
+          <div class="days">${DAY_CELL.repeat(7)}</div>
+        </div>`).join('')}
+      <details class="comment"><summary>Add a comment</summary>
+        <textarea rows="2" placeholder="Optional" aria-label="Comment"></textarea>
+      </details>
+      <div class="totals">
+        <div><span>Week 1</span><strong class="t1">0 h</strong></div>
+        <div><span>Week 2</span><strong class="t2">0 h</strong></div>
+        <div><span>Period total</span><strong class="tp">0 h</strong></div>
+      </div>`;
+    $('.name', card).value = emp.name || '';
+    $$('.hrs', card).forEach((input, i) => { input.value = (emp.hours && emp.hours[i]) || ''; });
+    if (emp.comments) { $('textarea', card).value = emp.comments; $('details', card).open = true; }
+
+    // Two taps to remove, so a stray tap on a phone can't wipe out an employee.
+    const remove = $('.remove', card);
+    let disarm;
+    remove.addEventListener('click', () => {
+      if (remove.classList.contains('armed')) { card.remove(); refresh(); return; }
+      remove.classList.add('armed');
+      remove.textContent = 'Remove?';
+      clearTimeout(disarm);
+      disarm = setTimeout(() => { remove.classList.remove('armed'); remove.textContent = '✕'; }, 3000);
+    });
+    return card;
+  }
+
+  function refresh() {
+    const start = periodStart();
+    const hint = $('#periodHint');
+    const offSchedule = !!(start && anchor() && !onSchedule(start));
+    hint.classList.toggle('warn', offSchedule);
+    if (!start) {
+      hint.textContent = 'Choose the first day of the two-week pay period.';
+    } else {
+      const end = addDays(start, 13);
+      const startYear = start.getFullYear() === end.getFullYear() ? '' : `, ${start.getFullYear()}`;
+      hint.textContent = `Pay period: ${longDate(start)}${startYear} – ${longDate(end)}, ${end.getFullYear()}` +
+          (offSchedule ? '. This isn’t on your usual pay schedule; please double-check the date.' : '');
+    }
+
+    let grand = 0;
+    const cards = $$('.emp');
+    cards.forEach(card => {
+      $$('.week', card).forEach((week, w) => {
+        $('.range', week).textContent = start
+            ? `· ${shortDate(addDays(start, 7 * w))} – ${shortDate(addDays(start, 7 * w + 6))}` : '';
+        $$('.day', week).forEach((day, i) => {
+          const n = 7 * w + i;
+          const date = start && addDays(start, n);
+          $('.dl', day).textContent = date ? WEEKDAYS[date.getDay()] : `Day ${n + 1}`;
+          $('.dn', day).textContent = date ? date.getDate() : '';
+          day.classList.toggle('weekend', !!date && (date.getDay() === 0 || date.getDay() === 6));
+          $('.hrs', day).setAttribute('aria-label', date ? `${longDate(date)} hours` : `Day ${n + 1} hours`);
+        });
+      });
+      const totals = [0, 0];
+      $$('.hrs', card).forEach((input, i) => {
+        const h = parseHours(input.value);
+        const bad = isNaN(h) || h > 24;
+        input.classList.toggle('bad', bad);
+        if (!bad) totals[i < 7 ? 0 : 1] += h;
+      });
+      $('.t1', card).textContent = fmt(totals[0]);
+      $('.t2', card).textContent = fmt(totals[1]);
+      $('.tp', card).textContent = fmt(totals[0] + totals[1]);
+      grand += totals[0] + totals[1];
+    });
+    $('#grand').textContent = fmt(grand);
+    $('#grandLabel').textContent = cards.length === 1 ? '1 employee' : `${cards.length} employees`;
+    $('#addEmployee').disabled = cards.length >= BOOT.maxEmployees;
+    saveDraft();
+  }
+
+  /** hours are sent in date order from the start date; the server maps them to weekday columns. */
+  function collect() {
+    return {
+      token: BOOT.token,
+      clientName: BOOT.client ? '' : $('#client').value.trim(),
+      periodStart: $('#period').value,
+      employees: $$('.emp').map(card => ({
+        name: $('.name', card).value.trim(),
+        hours: $$('.hrs', card).map(input => {
+          const h = parseHours(input.value);
+          return isNaN(h) ? input.value : round2(h);
+        }),
+        comments: $('textarea', card).value.trim(),
+      })),
+    };
+  }
+
+  /** Returns [message, element to focus] for the first problem, or null. */
+  function firstProblem(data) {
+    if (!BOOT.client && !data.clientName) return ['Enter the client / company name.', $('#client')];
+    if (!periodStart()) return ['Choose the pay period start date.', $('#period')];
+    if (!data.employees.length) return ['Add at least one employee.', $('#addEmployee')];
+    const unnamed = $$('.emp .name').find(input => !input.value.trim());
+    if (unnamed) return ['Every employee needs a name.', unnamed];
+    const bad = $('.hrs.bad');
+    if (bad) return ['Hours must be a number from 0 to 24 (e.g. 7.5 or 7:30).', bad];
+    return null;
+  }
+
+  function submit() {
+    const data = collect();
+    const problem = firstProblem(data);
+    if (problem) {
+      $('#msg').textContent = problem[0];
+      problem[1].scrollIntoView({ block: 'center', behavior: 'smooth' });
+      problem[1].focus({ preventScroll: true });
+      return;
+    }
+    $('#msg').textContent = '';
+    const button = $('#submit');
+    button.disabled = true;
+    button.textContent = 'Submitting…';
+    google.script.run
+        .withSuccessHandler(result => {
+          clearDraft();
+          const start = periodStart();
+          $('#doneSummary').textContent =
+              `${result.employees} employee${result.employees === 1 ? '' : 's'} · ${result.totalHours} total hours · ` +
+              `${shortDate(start)} – ${shortDate(addDays(start, 13))}`;
+          $('#form').hidden = true;
+          $('#bar').hidden = true;
+          $('#done').hidden = false;
+          window.scrollTo(0, 0);
+        })
+        .withFailureHandler(err => {
+          $('#msg').textContent = (err && err.message) || 'Something went wrong. Please try again.';
+          button.disabled = false;
+          button.textContent = 'Submit hours';
+        })
+        .submitTimesheet(data);
+  }
+
+  // Drafts live only in this browser, so an interrupted phone session isn't lost.
+  function saveDraft() {
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(collect())); } catch (e) {}
+  }
+  function loadDraft() {
+    try { return JSON.parse(localStorage.getItem(DRAFT_KEY)); } catch (e) { return null; }
+  }
+  function clearDraft() {
+    try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+  }
+
+  function render(draft) {
+    const employees = draft && draft.employees && draft.employees.length ? draft.employees
+        : BOOT.employees.length ? BOOT.employees.map(name => ({ name })) : [{}];
+    $('#client').value = (draft && draft.clientName) || '';
+    $('#period').value = (draft && draft.periodStart) || defaultPeriod();
+    $('#employees').replaceChildren(...employees.map(employeeCard));
+    $('#draftNote').hidden = !draft;
+    $('#msg').textContent = '';
+    $('#form').hidden = false;
+    $('#bar').hidden = false;
+    $('#done').hidden = true;
+    const button = $('#submit');
+    button.disabled = false;
+    button.textContent = 'Submit hours';
+    refresh();
+  }
+
+  $('#title').textContent = BOOT.client || BOOT.title;
+  $('#subtitle').textContent = BOOT.client ? BOOT.title : 'Two-week pay period';
+  $('#clientField').hidden = !!BOOT.client;
+
+  if (BOOT.blocked) {
+    $('#form').hidden = true;
+    $('#bar').hidden = true;
+    $('#blocked').hidden = false;
+    $('#blocked').textContent = BOOT.blocked;
+  } else {
+    // Only hours or comments make a draft worth restoring; the date fills itself in.
+    const draft = loadDraft();
+    const hasContent = draft && (draft.employees || []).some(e =>
+        e.comments || (e.hours || []).some(h => h !== '' && h !== 0));
+    render(hasContent ? draft : null);
+
+    document.addEventListener('input', refresh);
+    $('#prevPeriod').addEventListener('click', () => stepPeriod(-1));
+    $('#nextPeriod').addEventListener('click', () => stepPeriod(1));
+    $('#addEmployee').addEventListener('click', () => {
+      const card = employeeCard({});
+      $('#employees').append(card);
+      refresh();
+      $('.name', card).focus();
+    });
+    $('#submit').addEventListener('click', submit);
+    $('#clearDraft').addEventListener('click', () => { clearDraft(); render(null); });
+    $('#another').addEventListener('click', () => render(null));
+
+    $('#employees').addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || !e.target.matches('.hrs, .name')) return;
+      e.preventDefault();
+      const fields = $$('.name, .hrs');
+      const next = fields[fields.indexOf(e.target) + 1];
+      if (next) next.focus();
+    });
+    // Show how "7:30" or "7,5" was read, once the person moves on.
+    $('#employees').addEventListener('focusout', e => {
+      if (!e.target.matches('.hrs')) return;
+      const h = parseHours(e.target.value);
+      if (e.target.value.trim() && !isNaN(h) && h <= 24) e.target.value = round2(h);
+    });
+  }
+</script>
+</body>
+</html>

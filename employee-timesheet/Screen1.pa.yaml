@@ -1,0 +1,1054 @@
+Screens:
+    Screen1:
+        Children:
+            - tsRoot:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                    LayoutDirection: =LayoutDirection.Vertical
+                    LayoutOverflowY: =LayoutOverflow.Scroll
+                    Width: =Parent.Width
+                    Height: =Parent.Height
+                    LayoutMinWidth: =0
+                    LayoutMinHeight: =0
+                    LayoutAlignItems: =LayoutAlignItems.Stretch
+                    LayoutGap: =16
+                    PaddingTop: =16
+                    PaddingBottom: =24
+                    PaddingLeft: =16
+                    PaddingRight: =16
+                    Fill: =RGBA(244,246,249,1)
+                Children:
+                    - tsHeaderCard:
+                        Control: GroupContainer
+                        Variant: AutoLayout
+                        Properties:
+                            LayoutDirection: =LayoutDirection.Vertical
+                            LayoutAlignItems: =LayoutAlignItems.Stretch
+                            LayoutGap: =16
+                            PaddingTop: =20
+                            PaddingBottom: =20
+                            PaddingLeft: =20
+                            PaddingRight: =20
+                            LayoutMinWidth: =0
+                            LayoutMinHeight: =0
+                            Height: =232
+                            FillPortions: =0
+                            AlignInContainer: =AlignInContainer.Stretch
+                            Fill: =RGBA(255,255,255,1)
+                            DropShadow: =DropShadow.Light
+                            RadiusTopLeft: =8
+                            RadiusTopRight: =8
+                            RadiusBottomLeft: =8
+                            RadiusBottomRight: =8
+                        Children:
+                            - lblEmployeeFieldLabel:
+                                Control: ModernText
+                                Properties:
+                                    Text: ="Employee"
+                                    Color: =RGBA(100,116,139,1)
+                                    Size: =13
+                                    FontWeight: =FontWeight.Semibold
+                                    Wrap: =false
+                                    AutoHeight: =false
+                                    Height: =20
+                                    PaddingTop: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AccessibleLabel: ="Employee field label"
+                            - cmbEmployee:
+                                Control: ModernDropdown
+                                Properties:
+                                    Items: =colEmployees
+                                    ItemDisplayText: =ThisItem.Name
+                                    Height: =52
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AccessibleLabel: ="Employee"
+                            - lblPayPeriodFieldLabel:
+                                Control: ModernText
+                                Properties:
+                                    Text: ="Pay Period Start"
+                                    Color: =RGBA(100,116,139,1)
+                                    Size: =13
+                                    FontWeight: =FontWeight.Semibold
+                                    Wrap: =false
+                                    AutoHeight: =false
+                                    Height: =20
+                                    PaddingTop: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AccessibleLabel: ="Pay period start date field label"
+                            - dpPayPeriodStart:
+                                Control: ModernDatePicker
+                                Properties:
+                                    DefaultDate: =Today()
+                                    Height: =52
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AccessibleLabel: ="Pay period start date"
+                    - tsWeek1Card:
+                        Control: GroupContainer
+                        Variant: AutoLayout
+                        Properties:
+                            LayoutDirection: =LayoutDirection.Vertical
+                            LayoutAlignItems: =LayoutAlignItems.Stretch
+                            LayoutGap: =8
+                            PaddingTop: =16
+                            PaddingBottom: =16
+                            PaddingLeft: =12
+                            PaddingRight: =12
+                            LayoutMinWidth: =0
+                            LayoutMinHeight: =0
+                            Height: =512
+                            FillPortions: =0
+                            AlignInContainer: =AlignInContainer.Stretch
+                            Fill: =RGBA(219,234,254,0.5)
+                            DropShadow: =DropShadow.Light
+                            RadiusTopLeft: =8
+                            RadiusTopRight: =8
+                            RadiusBottomLeft: =8
+                            RadiusBottomRight: =8
+                        Children:
+                            - lblWeek1Header:
+                                Control: ModernText
+                                Properties:
+                                    Text: ="Week 1"
+                                    Color: =RGBA(30,41,59,1)
+                                    Size: =20
+                                    FontWeight: =FontWeight.Bold
+                                    Wrap: =false
+                                    AutoHeight: =false
+                                    Height: =32
+                                    PaddingTop: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AccessibleLabel: ="Week 1 section header"
+                            - tsDayRowMon1:
+                                Control: GroupContainer
+                                Variant: AutoLayout
+                                Properties:
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutJustifyContent: =LayoutJustifyContent.Start
+                                    LayoutGap: =8
+                                    PaddingTop: =4
+                                    PaddingBottom: =4
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    LayoutMinWidth: =0
+                                    LayoutMinHeight: =0
+                                    Height: =56
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                Children:
+                                    - lblMon1Date:
+                                        Control: ModernText
+                                        Properties:
+                                            Text: =Text(dpPayPeriodStart.SelectedDate + 0, "dddd, mmmm d")
+                                            Color: =RGBA(30,41,59,1)
+                                            Size: =15
+                                            FontWeight: =FontWeight.Normal
+                                            Align: =Align.Left
+                                            VerticalAlign: =VerticalAlign.Middle
+                                            Wrap: =false
+                                            AutoHeight: =false
+                                            Height: =48
+                                            PaddingTop: =0
+                                            PaddingBottom: =0
+                                            PaddingLeft: =0
+                                            PaddingRight: =0
+                                            FillPortions: =1
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Date for Monday, week 1"
+                                            Visible: =true
+                                    - txtMon1Hours:
+                                        Control: ModernNumberInput
+                                        Properties:
+                                            Min: =0
+                                            Max: =24
+                                            Precision: =DecimalPrecision.'1'
+                                            Step: =0.5
+                                            Default: =0
+                                            HintText: ="0-24 hours"
+                                            ValidationState: =If(Self.Value < 0 || Self.Value > 24, ValidationState.Error, ValidationState.None)
+                                            Height: =48
+                                            FillPortions: =0
+                                            Width: =92
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Hours worked Monday, week 1"
+                            - tsDayRowTue1:
+                                Control: GroupContainer
+                                Variant: AutoLayout
+                                Properties:
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutJustifyContent: =LayoutJustifyContent.Start
+                                    LayoutGap: =8
+                                    PaddingTop: =4
+                                    PaddingBottom: =4
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    LayoutMinWidth: =0
+                                    LayoutMinHeight: =0
+                                    Height: =56
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                Children:
+                                    - lblTue1Date:
+                                        Control: ModernText
+                                        Properties:
+                                            Text: =Text(dpPayPeriodStart.SelectedDate + 1, "dddd, mmmm d")
+                                            Color: =RGBA(30,41,59,1)
+                                            Size: =15
+                                            FontWeight: =FontWeight.Normal
+                                            Align: =Align.Left
+                                            VerticalAlign: =VerticalAlign.Middle
+                                            Wrap: =false
+                                            AutoHeight: =false
+                                            Height: =48
+                                            PaddingTop: =0
+                                            PaddingBottom: =0
+                                            PaddingLeft: =0
+                                            PaddingRight: =0
+                                            FillPortions: =1
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Date for Tuesday, week 1"
+                                            Visible: =true
+                                    - txtTue1Hours:
+                                        Control: ModernNumberInput
+                                        Properties:
+                                            Min: =0
+                                            Max: =24
+                                            Precision: =DecimalPrecision.'1'
+                                            Step: =0.5
+                                            Default: =0
+                                            HintText: ="0-24 hours"
+                                            ValidationState: =If(Self.Value < 0 || Self.Value > 24, ValidationState.Error, ValidationState.None)
+                                            Height: =48
+                                            FillPortions: =0
+                                            Width: =92
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Hours worked Tuesday, week 1"
+                            - tsDayRowWed1:
+                                Control: GroupContainer
+                                Variant: AutoLayout
+                                Properties:
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutJustifyContent: =LayoutJustifyContent.Start
+                                    LayoutGap: =8
+                                    PaddingTop: =4
+                                    PaddingBottom: =4
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    LayoutMinWidth: =0
+                                    LayoutMinHeight: =0
+                                    Height: =56
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                Children:
+                                    - lblWed1Date:
+                                        Control: ModernText
+                                        Properties:
+                                            Text: =Text(dpPayPeriodStart.SelectedDate + 2, "dddd, mmmm d")
+                                            Color: =RGBA(30,41,59,1)
+                                            Size: =15
+                                            FontWeight: =FontWeight.Normal
+                                            Align: =Align.Left
+                                            VerticalAlign: =VerticalAlign.Middle
+                                            Wrap: =false
+                                            AutoHeight: =false
+                                            Height: =48
+                                            PaddingTop: =0
+                                            PaddingBottom: =0
+                                            PaddingLeft: =0
+                                            PaddingRight: =0
+                                            FillPortions: =1
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Date for Wednesday, week 1"
+                                            Visible: =true
+                                    - txtWed1Hours:
+                                        Control: ModernNumberInput
+                                        Properties:
+                                            Min: =0
+                                            Max: =24
+                                            Precision: =DecimalPrecision.'1'
+                                            Step: =0.5
+                                            Default: =0
+                                            HintText: ="0-24 hours"
+                                            ValidationState: =If(Self.Value < 0 || Self.Value > 24, ValidationState.Error, ValidationState.None)
+                                            Height: =48
+                                            FillPortions: =0
+                                            Width: =92
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Hours worked Wednesday, week 1"
+                            - tsDayRowThu1:
+                                Control: GroupContainer
+                                Variant: AutoLayout
+                                Properties:
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutJustifyContent: =LayoutJustifyContent.Start
+                                    LayoutGap: =8
+                                    PaddingTop: =4
+                                    PaddingBottom: =4
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    LayoutMinWidth: =0
+                                    LayoutMinHeight: =0
+                                    Height: =56
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                Children:
+                                    - lblThu1Date:
+                                        Control: ModernText
+                                        Properties:
+                                            Text: =Text(dpPayPeriodStart.SelectedDate + 3, "dddd, mmmm d")
+                                            Color: =RGBA(30,41,59,1)
+                                            Size: =15
+                                            FontWeight: =FontWeight.Normal
+                                            Align: =Align.Left
+                                            VerticalAlign: =VerticalAlign.Middle
+                                            Wrap: =false
+                                            AutoHeight: =false
+                                            Height: =48
+                                            PaddingTop: =0
+                                            PaddingBottom: =0
+                                            PaddingLeft: =0
+                                            PaddingRight: =0
+                                            FillPortions: =1
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Date for Thursday, week 1"
+                                            Visible: =true
+                                    - txtThu1Hours:
+                                        Control: ModernNumberInput
+                                        Properties:
+                                            Min: =0
+                                            Max: =24
+                                            Precision: =DecimalPrecision.'1'
+                                            Step: =0.5
+                                            Default: =0
+                                            HintText: ="0-24 hours"
+                                            ValidationState: =If(Self.Value < 0 || Self.Value > 24, ValidationState.Error, ValidationState.None)
+                                            Height: =48
+                                            FillPortions: =0
+                                            Width: =92
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Hours worked Thursday, week 1"
+                            - tsDayRowFri1:
+                                Control: GroupContainer
+                                Variant: AutoLayout
+                                Properties:
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutJustifyContent: =LayoutJustifyContent.Start
+                                    LayoutGap: =8
+                                    PaddingTop: =4
+                                    PaddingBottom: =4
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    LayoutMinWidth: =0
+                                    LayoutMinHeight: =0
+                                    Height: =56
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                Children:
+                                    - lblFri1Date:
+                                        Control: ModernText
+                                        Properties:
+                                            Text: =Text(dpPayPeriodStart.SelectedDate + 4, "dddd, mmmm d")
+                                            Color: =RGBA(30,41,59,1)
+                                            Size: =15
+                                            FontWeight: =FontWeight.Normal
+                                            Align: =Align.Left
+                                            VerticalAlign: =VerticalAlign.Middle
+                                            Wrap: =false
+                                            AutoHeight: =false
+                                            Height: =48
+                                            PaddingTop: =0
+                                            PaddingBottom: =0
+                                            PaddingLeft: =0
+                                            PaddingRight: =0
+                                            FillPortions: =1
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Date for Friday, week 1"
+                                            Visible: =true
+                                    - txtFri1Hours:
+                                        Control: ModernNumberInput
+                                        Properties:
+                                            Min: =0
+                                            Max: =24
+                                            Precision: =DecimalPrecision.'1'
+                                            Step: =0.5
+                                            Default: =0
+                                            HintText: ="0-24 hours"
+                                            ValidationState: =If(Self.Value < 0 || Self.Value > 24, ValidationState.Error, ValidationState.None)
+                                            Height: =48
+                                            FillPortions: =0
+                                            Width: =92
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Hours worked Friday, week 1"
+                            - tsDayRowSat1:
+                                Control: GroupContainer
+                                Variant: AutoLayout
+                                Properties:
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutJustifyContent: =LayoutJustifyContent.Start
+                                    LayoutGap: =8
+                                    PaddingTop: =4
+                                    PaddingBottom: =4
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    LayoutMinWidth: =0
+                                    LayoutMinHeight: =0
+                                    Height: =56
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                Children:
+                                    - lblSat1Date:
+                                        Control: ModernText
+                                        Properties:
+                                            Text: =Text(dpPayPeriodStart.SelectedDate + 5, "dddd, mmmm d")
+                                            Color: =RGBA(30,41,59,1)
+                                            Size: =15
+                                            FontWeight: =FontWeight.Normal
+                                            Align: =Align.Left
+                                            VerticalAlign: =VerticalAlign.Middle
+                                            Wrap: =false
+                                            AutoHeight: =false
+                                            Height: =48
+                                            PaddingTop: =0
+                                            PaddingBottom: =0
+                                            PaddingLeft: =0
+                                            PaddingRight: =0
+                                            FillPortions: =1
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Date for Saturday, week 1"
+                                            Visible: =true
+                                    - txtSat1Hours:
+                                        Control: ModernNumberInput
+                                        Properties:
+                                            Min: =0
+                                            Max: =24
+                                            Precision: =DecimalPrecision.'1'
+                                            Step: =0.5
+                                            Default: =0
+                                            HintText: ="0-24 hours"
+                                            ValidationState: =If(Self.Value < 0 || Self.Value > 24, ValidationState.Error, ValidationState.None)
+                                            Height: =48
+                                            FillPortions: =0
+                                            Width: =92
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Hours worked Saturday, week 1"
+                            - tsDayRowSun1:
+                                Control: GroupContainer
+                                Variant: AutoLayout
+                                Properties:
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutJustifyContent: =LayoutJustifyContent.Start
+                                    LayoutGap: =8
+                                    PaddingTop: =4
+                                    PaddingBottom: =4
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    LayoutMinWidth: =0
+                                    LayoutMinHeight: =0
+                                    Height: =56
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                Children:
+                                    - lblSun1Date:
+                                        Control: ModernText
+                                        Properties:
+                                            Text: =Text(dpPayPeriodStart.SelectedDate + 6, "dddd, mmmm d")
+                                            Color: =RGBA(30,41,59,1)
+                                            Size: =15
+                                            FontWeight: =FontWeight.Normal
+                                            Align: =Align.Left
+                                            VerticalAlign: =VerticalAlign.Middle
+                                            Wrap: =false
+                                            AutoHeight: =false
+                                            Height: =48
+                                            PaddingTop: =0
+                                            PaddingBottom: =0
+                                            PaddingLeft: =0
+                                            PaddingRight: =0
+                                            FillPortions: =1
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Date for Sunday, week 1"
+                                            Visible: =true
+                                    - txtSun1Hours:
+                                        Control: ModernNumberInput
+                                        Properties:
+                                            Min: =0
+                                            Max: =24
+                                            Precision: =DecimalPrecision.'1'
+                                            Step: =0.5
+                                            Default: =0
+                                            HintText: ="0-24 hours"
+                                            ValidationState: =If(Self.Value < 0 || Self.Value > 24, ValidationState.Error, ValidationState.None)
+                                            Height: =48
+                                            FillPortions: =0
+                                            Width: =92
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Hours worked Sunday, week 1"
+                    - tsWeek2Card:
+                        Control: GroupContainer
+                        Variant: AutoLayout
+                        Properties:
+                            LayoutDirection: =LayoutDirection.Vertical
+                            LayoutAlignItems: =LayoutAlignItems.Stretch
+                            LayoutGap: =8
+                            PaddingTop: =16
+                            PaddingBottom: =16
+                            PaddingLeft: =12
+                            PaddingRight: =12
+                            LayoutMinWidth: =0
+                            LayoutMinHeight: =0
+                            Height: =512
+                            FillPortions: =0
+                            AlignInContainer: =AlignInContainer.Stretch
+                            Fill: =RGBA(254,243,199,0.5)
+                            DropShadow: =DropShadow.Light
+                            RadiusTopLeft: =8
+                            RadiusTopRight: =8
+                            RadiusBottomLeft: =8
+                            RadiusBottomRight: =8
+                        Children:
+                            - lblWeek2Header:
+                                Control: ModernText
+                                Properties:
+                                    Text: ="Week 2"
+                                    Color: =RGBA(30,41,59,1)
+                                    Size: =20
+                                    FontWeight: =FontWeight.Bold
+                                    Wrap: =false
+                                    AutoHeight: =false
+                                    Height: =32
+                                    PaddingTop: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AccessibleLabel: ="Week 2 section header"
+                            - tsDayRowMon2:
+                                Control: GroupContainer
+                                Variant: AutoLayout
+                                Properties:
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutJustifyContent: =LayoutJustifyContent.Start
+                                    LayoutGap: =8
+                                    PaddingTop: =4
+                                    PaddingBottom: =4
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    LayoutMinWidth: =0
+                                    LayoutMinHeight: =0
+                                    Height: =56
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                Children:
+                                    - lblMon2Date:
+                                        Control: ModernText
+                                        Properties:
+                                            Text: =Text(dpPayPeriodStart.SelectedDate + 7, "dddd, mmmm d")
+                                            Color: =RGBA(30,41,59,1)
+                                            Size: =15
+                                            FontWeight: =FontWeight.Normal
+                                            Align: =Align.Left
+                                            VerticalAlign: =VerticalAlign.Middle
+                                            Wrap: =false
+                                            AutoHeight: =false
+                                            Height: =48
+                                            PaddingTop: =0
+                                            PaddingBottom: =0
+                                            PaddingLeft: =0
+                                            PaddingRight: =0
+                                            FillPortions: =1
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Date for Monday, week 2"
+                                            Visible: =true
+                                    - txtMon2Hours:
+                                        Control: ModernNumberInput
+                                        Properties:
+                                            Min: =0
+                                            Max: =24
+                                            Precision: =DecimalPrecision.'1'
+                                            Step: =0.5
+                                            Default: =0
+                                            HintText: ="0-24 hours"
+                                            ValidationState: =If(Self.Value < 0 || Self.Value > 24, ValidationState.Error, ValidationState.None)
+                                            Height: =48
+                                            FillPortions: =0
+                                            Width: =92
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Hours worked Monday, week 2"
+                            - tsDayRowTue2:
+                                Control: GroupContainer
+                                Variant: AutoLayout
+                                Properties:
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutJustifyContent: =LayoutJustifyContent.Start
+                                    LayoutGap: =8
+                                    PaddingTop: =4
+                                    PaddingBottom: =4
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    LayoutMinWidth: =0
+                                    LayoutMinHeight: =0
+                                    Height: =56
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                Children:
+                                    - lblTue2Date:
+                                        Control: ModernText
+                                        Properties:
+                                            Text: =Text(dpPayPeriodStart.SelectedDate + 8, "dddd, mmmm d")
+                                            Color: =RGBA(30,41,59,1)
+                                            Size: =15
+                                            FontWeight: =FontWeight.Normal
+                                            Align: =Align.Left
+                                            VerticalAlign: =VerticalAlign.Middle
+                                            Wrap: =false
+                                            AutoHeight: =false
+                                            Height: =48
+                                            PaddingTop: =0
+                                            PaddingBottom: =0
+                                            PaddingLeft: =0
+                                            PaddingRight: =0
+                                            FillPortions: =1
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Date for Tuesday, week 2"
+                                            Visible: =true
+                                    - txtTue2Hours:
+                                        Control: ModernNumberInput
+                                        Properties:
+                                            Min: =0
+                                            Max: =24
+                                            Precision: =DecimalPrecision.'1'
+                                            Step: =0.5
+                                            Default: =0
+                                            HintText: ="0-24 hours"
+                                            ValidationState: =If(Self.Value < 0 || Self.Value > 24, ValidationState.Error, ValidationState.None)
+                                            Height: =48
+                                            FillPortions: =0
+                                            Width: =92
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Hours worked Tuesday, week 2"
+                            - tsDayRowWed2:
+                                Control: GroupContainer
+                                Variant: AutoLayout
+                                Properties:
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutJustifyContent: =LayoutJustifyContent.Start
+                                    LayoutGap: =8
+                                    PaddingTop: =4
+                                    PaddingBottom: =4
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    LayoutMinWidth: =0
+                                    LayoutMinHeight: =0
+                                    Height: =56
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                Children:
+                                    - lblWed2Date:
+                                        Control: ModernText
+                                        Properties:
+                                            Text: =Text(dpPayPeriodStart.SelectedDate + 9, "dddd, mmmm d")
+                                            Color: =RGBA(30,41,59,1)
+                                            Size: =15
+                                            FontWeight: =FontWeight.Normal
+                                            Align: =Align.Left
+                                            VerticalAlign: =VerticalAlign.Middle
+                                            Wrap: =false
+                                            AutoHeight: =false
+                                            Height: =48
+                                            PaddingTop: =0
+                                            PaddingBottom: =0
+                                            PaddingLeft: =0
+                                            PaddingRight: =0
+                                            FillPortions: =1
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Date for Wednesday, week 2"
+                                            Visible: =true
+                                    - txtWed2Hours:
+                                        Control: ModernNumberInput
+                                        Properties:
+                                            Min: =0
+                                            Max: =24
+                                            Precision: =DecimalPrecision.'1'
+                                            Step: =0.5
+                                            Default: =0
+                                            HintText: ="0-24 hours"
+                                            ValidationState: =If(Self.Value < 0 || Self.Value > 24, ValidationState.Error, ValidationState.None)
+                                            Height: =48
+                                            FillPortions: =0
+                                            Width: =92
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Hours worked Wednesday, week 2"
+                            - tsDayRowThu2:
+                                Control: GroupContainer
+                                Variant: AutoLayout
+                                Properties:
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutJustifyContent: =LayoutJustifyContent.Start
+                                    LayoutGap: =8
+                                    PaddingTop: =4
+                                    PaddingBottom: =4
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    LayoutMinWidth: =0
+                                    LayoutMinHeight: =0
+                                    Height: =56
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                Children:
+                                    - lblThu2Date:
+                                        Control: ModernText
+                                        Properties:
+                                            Text: =Text(dpPayPeriodStart.SelectedDate + 10, "dddd, mmmm d")
+                                            Color: =RGBA(30,41,59,1)
+                                            Size: =15
+                                            FontWeight: =FontWeight.Normal
+                                            Align: =Align.Left
+                                            VerticalAlign: =VerticalAlign.Middle
+                                            Wrap: =false
+                                            AutoHeight: =false
+                                            Height: =48
+                                            PaddingTop: =0
+                                            PaddingBottom: =0
+                                            PaddingLeft: =0
+                                            PaddingRight: =0
+                                            FillPortions: =1
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Date for Thursday, week 2"
+                                            Visible: =true
+                                    - txtThu2Hours:
+                                        Control: ModernNumberInput
+                                        Properties:
+                                            Min: =0
+                                            Max: =24
+                                            Precision: =DecimalPrecision.'1'
+                                            Step: =0.5
+                                            Default: =0
+                                            HintText: ="0-24 hours"
+                                            ValidationState: =If(Self.Value < 0 || Self.Value > 24, ValidationState.Error, ValidationState.None)
+                                            Height: =48
+                                            FillPortions: =0
+                                            Width: =92
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Hours worked Thursday, week 2"
+                            - tsDayRowFri2:
+                                Control: GroupContainer
+                                Variant: AutoLayout
+                                Properties:
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutJustifyContent: =LayoutJustifyContent.Start
+                                    LayoutGap: =8
+                                    PaddingTop: =4
+                                    PaddingBottom: =4
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    LayoutMinWidth: =0
+                                    LayoutMinHeight: =0
+                                    Height: =56
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                Children:
+                                    - lblFri2Date:
+                                        Control: ModernText
+                                        Properties:
+                                            Text: =Text(dpPayPeriodStart.SelectedDate + 11, "dddd, mmmm d")
+                                            Color: =RGBA(30,41,59,1)
+                                            Size: =15
+                                            FontWeight: =FontWeight.Normal
+                                            Align: =Align.Left
+                                            VerticalAlign: =VerticalAlign.Middle
+                                            Wrap: =false
+                                            AutoHeight: =false
+                                            Height: =48
+                                            PaddingTop: =0
+                                            PaddingBottom: =0
+                                            PaddingLeft: =0
+                                            PaddingRight: =0
+                                            FillPortions: =1
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Date for Friday, week 2"
+                                            Visible: =true
+                                    - txtFri2Hours:
+                                        Control: ModernNumberInput
+                                        Properties:
+                                            Min: =0
+                                            Max: =24
+                                            Precision: =DecimalPrecision.'1'
+                                            Step: =0.5
+                                            Default: =0
+                                            HintText: ="0-24 hours"
+                                            ValidationState: =If(Self.Value < 0 || Self.Value > 24, ValidationState.Error, ValidationState.None)
+                                            Height: =48
+                                            FillPortions: =0
+                                            Width: =92
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Hours worked Friday, week 2"
+                            - tsDayRowSat2:
+                                Control: GroupContainer
+                                Variant: AutoLayout
+                                Properties:
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutJustifyContent: =LayoutJustifyContent.Start
+                                    LayoutGap: =8
+                                    PaddingTop: =4
+                                    PaddingBottom: =4
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    LayoutMinWidth: =0
+                                    LayoutMinHeight: =0
+                                    Height: =56
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                Children:
+                                    - lblSat2Date:
+                                        Control: ModernText
+                                        Properties:
+                                            Text: =Text(dpPayPeriodStart.SelectedDate + 12, "dddd, mmmm d")
+                                            Color: =RGBA(30,41,59,1)
+                                            Size: =15
+                                            FontWeight: =FontWeight.Normal
+                                            Align: =Align.Left
+                                            VerticalAlign: =VerticalAlign.Middle
+                                            Wrap: =false
+                                            AutoHeight: =false
+                                            Height: =48
+                                            PaddingTop: =0
+                                            PaddingBottom: =0
+                                            PaddingLeft: =0
+                                            PaddingRight: =0
+                                            FillPortions: =1
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Date for Saturday, week 2"
+                                            Visible: =true
+                                    - txtSat2Hours:
+                                        Control: ModernNumberInput
+                                        Properties:
+                                            Min: =0
+                                            Max: =24
+                                            Precision: =DecimalPrecision.'1'
+                                            Step: =0.5
+                                            Default: =0
+                                            HintText: ="0-24 hours"
+                                            ValidationState: =If(Self.Value < 0 || Self.Value > 24, ValidationState.Error, ValidationState.None)
+                                            Height: =48
+                                            FillPortions: =0
+                                            Width: =92
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Hours worked Saturday, week 2"
+                            - tsDayRowSun2:
+                                Control: GroupContainer
+                                Variant: AutoLayout
+                                Properties:
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutJustifyContent: =LayoutJustifyContent.Start
+                                    LayoutGap: =8
+                                    PaddingTop: =4
+                                    PaddingBottom: =4
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    LayoutMinWidth: =0
+                                    LayoutMinHeight: =0
+                                    Height: =56
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                Children:
+                                    - lblSun2Date:
+                                        Control: ModernText
+                                        Properties:
+                                            Text: =Text(dpPayPeriodStart.SelectedDate + 13, "dddd, mmmm d")
+                                            Color: =RGBA(30,41,59,1)
+                                            Size: =15
+                                            FontWeight: =FontWeight.Normal
+                                            Align: =Align.Left
+                                            VerticalAlign: =VerticalAlign.Middle
+                                            Wrap: =false
+                                            AutoHeight: =false
+                                            Height: =48
+                                            PaddingTop: =0
+                                            PaddingBottom: =0
+                                            PaddingLeft: =0
+                                            PaddingRight: =0
+                                            FillPortions: =1
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Date for Sunday, week 2"
+                                            Visible: =true
+                                    - txtSun2Hours:
+                                        Control: ModernNumberInput
+                                        Properties:
+                                            Min: =0
+                                            Max: =24
+                                            Precision: =DecimalPrecision.'1'
+                                            Step: =0.5
+                                            Default: =0
+                                            HintText: ="0-24 hours"
+                                            ValidationState: =If(Self.Value < 0 || Self.Value > 24, ValidationState.Error, ValidationState.None)
+                                            Height: =48
+                                            FillPortions: =0
+                                            Width: =92
+                                            AlignInContainer: =AlignInContainer.Center
+                                            AccessibleLabel: ="Hours worked Sunday, week 2"
+                    - tsTotalsCard:
+                        Control: GroupContainer
+                        Variant: AutoLayout
+                        Properties:
+                            LayoutDirection: =LayoutDirection.Vertical
+                            LayoutAlignItems: =LayoutAlignItems.Stretch
+                            LayoutGap: =8
+                            PaddingTop: =20
+                            PaddingBottom: =20
+                            PaddingLeft: =20
+                            PaddingRight: =20
+                            LayoutMinWidth: =0
+                            LayoutMinHeight: =0
+                            Height: =148
+                            FillPortions: =0
+                            AlignInContainer: =AlignInContainer.Stretch
+                            Fill: =RGBA(255,255,255,1)
+                            DropShadow: =DropShadow.Light
+                            RadiusTopLeft: =8
+                            RadiusTopRight: =8
+                            RadiusBottomLeft: =8
+                            RadiusBottomRight: =8
+                        Children:
+                            - lblWeek1Total:
+                                Control: ModernText
+                                Properties:
+                                    Text: '="Week 1 Total: " & Text(txtMon1Hours.Value + txtTue1Hours.Value + txtWed1Hours.Value + txtThu1Hours.Value + txtFri1Hours.Value + txtSat1Hours.Value + txtSun1Hours.Value, "0.0")'
+                                    Color: =RGBA(30,41,59,1)
+                                    Size: =16
+                                    FontWeight: =FontWeight.Normal
+                                    Wrap: =false
+                                    AutoHeight: =false
+                                    Height: =28
+                                    PaddingTop: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AccessibleLabel: ="Week 1 total hours"
+                            - lblWeek2Total:
+                                Control: ModernText
+                                Properties:
+                                    Text: '="Week 2 Total: " & Text(txtMon2Hours.Value + txtTue2Hours.Value + txtWed2Hours.Value + txtThu2Hours.Value + txtFri2Hours.Value + txtSat2Hours.Value + txtSun2Hours.Value, "0.0")'
+                                    Color: =RGBA(30,41,59,1)
+                                    Size: =16
+                                    FontWeight: =FontWeight.Normal
+                                    Wrap: =false
+                                    AutoHeight: =false
+                                    Height: =28
+                                    PaddingTop: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AccessibleLabel: ="Week 2 total hours"
+                            - lblTotalHours:
+                                Control: ModernText
+                                Properties:
+                                    Text: '="Total Hours: " & Text((txtMon1Hours.Value + txtTue1Hours.Value + txtWed1Hours.Value + txtThu1Hours.Value + txtFri1Hours.Value + txtSat1Hours.Value + txtSun1Hours.Value) + (txtMon2Hours.Value + txtTue2Hours.Value + txtWed2Hours.Value + txtThu2Hours.Value + txtFri2Hours.Value + txtSat2Hours.Value + txtSun2Hours.Value), "0.0")'
+                                    Color: =RGBA(30,41,59,1)
+                                    Size: =20
+                                    FontWeight: =FontWeight.Bold
+                                    Wrap: =false
+                                    AutoHeight: =false
+                                    Height: =36
+                                    PaddingTop: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AccessibleLabel: ="Total hours for the pay period"
+                    - tsCommentsCard:
+                        Control: GroupContainer
+                        Variant: AutoLayout
+                        Properties:
+                            LayoutDirection: =LayoutDirection.Vertical
+                            LayoutAlignItems: =LayoutAlignItems.Stretch
+                            LayoutGap: =8
+                            PaddingTop: =20
+                            PaddingBottom: =20
+                            PaddingLeft: =20
+                            PaddingRight: =20
+                            LayoutMinWidth: =0
+                            LayoutMinHeight: =0
+                            Height: =188
+                            FillPortions: =0
+                            AlignInContainer: =AlignInContainer.Stretch
+                            Fill: =RGBA(255,255,255,1)
+                            DropShadow: =DropShadow.Light
+                            RadiusTopLeft: =8
+                            RadiusTopRight: =8
+                            RadiusBottomLeft: =8
+                            RadiusBottomRight: =8
+                        Children:
+                            - lblCommentsFieldLabel:
+                                Control: ModernText
+                                Properties:
+                                    Text: ="Comments / Notes"
+                                    Color: =RGBA(100,116,139,1)
+                                    Size: =13
+                                    FontWeight: =FontWeight.Semibold
+                                    Wrap: =false
+                                    AutoHeight: =false
+                                    Height: =20
+                                    PaddingTop: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AccessibleLabel: ="Comments and notes field label"
+                            - txtCommentsNotes:
+                                Control: ModernTextInput
+                                Properties:
+                                    Type: =TextInputType.Multiline
+                                    Placeholder: ="Add any comments or notes (optional)"
+                                    Height: =120
+                                    FillPortions: =0
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AccessibleLabel: ="Comments or notes (optional)"
+                    - btnReviewEntry:
+                        Control: ModernButton
+                        Properties:
+                            Text: ="Review & Submit"
+                            Appearance: =ButtonAppearance.Primary
+                            BasePaletteColor: =RGBA(30,41,63,1)
+                            Color: =RGBA(255,255,255,1)
+                            Size: =18
+                            Height: =52
+                            Width: =Parent.Width
+                            FillPortions: =0
+                            AlignInContainer: =AlignInContainer.Stretch
+                            AccessibleLabel: ="Review and submit timesheet"
+                            OnSelect: =Navigate(ReviewSubmission, ScreenTransition.None)
