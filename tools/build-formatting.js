@@ -112,16 +112,25 @@ const DAY = 24 * 60 * 60 * 1000;
 const overdue = `if([$TimecardsIn] == false, if(Number([$DueDate]) > 0, if(Number(@now) > Number([$DueDate]), 1, 0), 0), 0) == 1`;
 const paySoon = `if(Number([$PayDate]) > 0, if(${2 * DAY} > Number([$PayDate]) - Number(@now), 1, 0), 0) == 1`;
 const ready = `[$Checklist] == 'Ready to close'`;
-const urgency = (red, amber, green, none) =>
-  `=if(${ready}, '${green}', if(${overdue}, '${red}', if(${paySoon}, '${amber}', '${none}')))`;
+// np: shown when the ticket's "No payroll this period" box is ticked.
+const urgency = (red, amber, green, none, np = none) =>
+  `=if([$NoPayroll] == true, '${np}', if(${ready}, '${green}', if(${overdue}, '${red}', if(${paySoon}, '${amber}', '${none}'))))`;
 const short = f => `=if([$${f}] == '', '-', toLocaleDateString([$${f}]))`;
+// "Label: value" pair, e.g. Phone: 360-0000.
+const labelled = (label, field) => ({
+  elmType: 'span',
+  style: { 'padding-left': '14px', 'font-size': '12px', color: '#605e5c' },
+  children: [{ elmType: 'span', txtContent: label + ': ', style: { 'font-weight': '600', color: '#323130' } }, { elmType: 'span', txtContent: '[$' + field + ']' }],
+});
 const text = (txt, style) => ({ elmType: 'span', txtContent: txt, style });
 // The checklist labels, reused in the row layout with no current field and no && (see above).
 // The "Next:" text is dropped there: the urgency badge and the labels already say it.
 const rowChildren = JSON.parse(JSON.stringify(column.children).split('@currentField').join('[$Checklist]')).slice(1);
 const markComplete = rowChildren.find(c => c.txtContent === 'Mark complete');
-markComplete.style.display = '=' + [`[$Status] == 'Open'`, ...STEPS.map(s => (s[2] === 'bool' ? done(s) : `[$${s[0]}] != 'To do'`))]
+// Shown when every step is done, or straight away when the ticket is marked "No payroll this period".
+const stepsDone = STEPS.map(s => (s[2] === 'bool' ? done(s) : `[$${s[0]}] != 'To do'`))
   .reduceRight((inner, cond) => `if(${cond}, ${inner}, 'none')`, "'inline-block'");
+markComplete.style.display = `=if([$Status] == 'Open', if([$NoPayroll] == true, 'inline-block', ${stepsDone}), 'none')`;
 // Two lines per ticket: title, badge and dates on the first; step labels on the second.
 const rows = {
   $schema: 'https://developer.microsoft.com/json-schemas/sp/v2/row-formatting.schema.json',
@@ -135,8 +144,8 @@ const rows = {
       'box-sizing': 'border-box',
       padding: '4px 12px',
       'border-bottom': '1px solid #edebe9',
-      'border-left': urgency('5px solid #d13438', '5px solid #f7a21b', '5px solid #0e700e', '5px solid #c8c6c4'),
-      'background-color': urgency('#fdf3f4', '#fffaf0', '#f3faf3', '#ffffff'),
+      'border-left': urgency('5px solid #d13438', '5px solid #f7a21b', '5px solid #0e700e', '5px solid #c8c6c4', '5px solid #8a8886'),
+      'background-color': urgency('#fdf3f4', '#fffaf0', '#f3faf3', '#ffffff', '#f3f2f1'),
     },
     children: [
       {
@@ -144,13 +153,13 @@ const rows = {
         style: { display: 'flex', 'flex-wrap': 'wrap', 'align-items': 'baseline', 'column-gap': '12px', width: '100%' },
         children: [
           {
-            elmType: 'a',
+            elmType: 'button', // opens the editable ticket in the side panel, same tab (checkboxes show without extra clicks)
             txtContent: '[$Title]',
-            attributes: { href: "=@currentWeb + '/Lists/PayrollTickets/DispForm.aspx?ID=' + [$ID]", target: '_blank' },
-            style: { 'font-weight': '600', 'font-size': '14px', color: '#201f1e', 'text-decoration': 'none' },
+            customRowAction: { action: 'editProps' },
+            style: { 'font-weight': '600', 'font-size': '14px', color: '#201f1e', border: 'none', 'background-color': 'transparent', padding: '0', cursor: 'pointer', 'text-align': 'left' },
           },
-          text(urgency('Timecards overdue', 'Payday soon', 'Ready to close', ''), {
-            'font-size': '11px', 'font-weight': '600', color: urgency('#a4262c', '#8a5a00', '#0e700e', '#605e5c'),
+          text(urgency('Timecards overdue', 'Payday soon', 'Ready to close', '', 'No payroll this period'), {
+            'font-size': '11px', 'font-weight': '600', color: urgency('#a4262c', '#8a5a00', '#0e700e', '#605e5c', '#323130'),
           }),
           text("='Due ' + " + short('DueDate').slice(1) + " + '  Pay ' + " + short('PayDate').slice(1) +
             " + '  ' + if([$AssignedTo] == '', 'Unassigned', [$AssignedTo.title])",
@@ -161,28 +170,35 @@ const rows = {
         elmType: 'div',
         style: { display: 'flex', 'flex-wrap': 'wrap', 'align-items': 'center', width: '100%' },
         children: [
-          ...rowChildren,
-          // Skip the whole ticket when the client has nothing to pay this period.
-          {
-            elmType: 'button',
-            txtContent: 'No payroll this period',
-            attributes: { title: 'Close this ticket: the client has no hours to pay' },
-            style: {
-              display: "=if([$Status] == 'Open', 'inline-block', 'none')",
-              padding: '2px 8px', margin: '2px 4px', 'border-radius': '4px', 'font-size': '12px', cursor: 'pointer',
-              border: '1px solid #8a8886', 'background-color': '#ffffff', color: '#605e5c',
-            },
-            customRowAction: { action: 'setValue', actionInput: { Status: 'No payroll this period' } },
-          },
+          // Fixed-width step labels in a 370px box: two per row (the grid style is not supported in views).
+          { elmType: 'div', style: { display: 'flex', 'flex-wrap': 'wrap', width: '370px' }, children: rowChildren.filter(c => c !== markComplete).map(c => ({ ...c, style: { ...c.style, width: '172px', 'text-align': 'center', 'box-sizing': 'border-box' } })) },
+          markComplete,
           // Client details pulled from the Clients list (lookup columns).
-          text('[$Client_x003a_Contact]', { 'margin-left': 'auto', 'padding-left': '12px', 'font-size': '12px', color: '#605e5c' }),
-          text('[$Client_x003a_Phone]', { 'padding-left': '12px', 'font-size': '12px', color: '#605e5c' }),
-          text('[$Report_x0020_delivery]', { 'padding-left': '12px', 'font-size': '12px', color: '#605e5c' }),
+          { elmType: 'div', style: { 'margin-left': 'auto' } },
+          labelled('Contact', 'Client_x003a_Contact'),
+          labelled('Phone', 'Client_x003a_Phone'),
+          labelled('Report', 'Report_x0020_delivery'),
         ],
       },
     ],
   },
 };
+
+// Larger rows for the To do view: bigger text, labels and spacing.
+const SIZES = { '11px': '13px', '12px': '14px', '13px': '14px', '14px': '17px' };
+const PADS = { '4px 12px': '10px 16px', '2px 8px': '4px 12px', '3px 10px': '6px 14px', '2px 4px 2px 0': '4px 6px 4px 0', '2px 4px': '4px 6px', '2px 0 2px 4px': '4px 0 4px 6px' };
+(function enlarge(n) {
+  if (Array.isArray(n)) return n.forEach(enlarge);
+  if (!n || typeof n !== 'object') return;
+  if (n.style) {
+    if (SIZES[n.style['font-size']]) n.style['font-size'] = SIZES[n.style['font-size']];
+    if (n.style['line-height']) n.style['line-height'] = '20px';
+    for (const k of ['padding', 'margin']) if (PADS[n.style[k]]) n.style[k] = PADS[n.style[k]];
+    if (n.style['border-radius'] === '12px') n.style['border-radius'] = '16px';
+    if (n.style['column-gap']) n.style['column-gap'] = '20px';
+  }
+  Object.values(n).forEach(enlarge);
+})(rows);
 
 const out = path.join(__dirname, '..', 'payroll-tickets-lists', 'formatting');
 fs.mkdirSync(out, { recursive: true });

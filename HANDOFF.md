@@ -265,6 +265,12 @@ marketplace. `.claude/settings.json` already enables it.
   so N/A steps are hidden. Timecards in, Payroll done and Billing done always show.
 - To do row also shows client Contact, Phone and Report delivery (lookup projections `Client_x003a_Contact`,
   `Client_x003a_Phone`, `Report_x0020_delivery`; the last one was added with `addDependentLookupField`)
-  and a "No payroll this period" button (sets Status to that choice, which leaves the Open filter).
+  (the "No payroll this period" button was removed again: set that Status on the ticket form instead; the Board column for it is hidden).
 - Staff checklist docx is checked against the Clients data; open question: BVTI "send preview" (the source
   line is cut off). The staff answers and user guide are in `local/Staff-Response-and-Guide.md` (names clients, so local only).
+- "No payroll this period" is now a Yes/No column `NoPayroll` on the ticket form (bottom of the form).
+  When ticked, the To do row turns grey with a "No payroll this period" badge and the Mark complete
+  button appears at once. The Status choice "No payroll this period" still exists but is unused.
+  Reading a view's CustomFormatter through REST returns `>` as `&gt;`: decode it before editing and
+  writing it back, and never write `&` or `<`.
+- Client standing notes: SharePoint cannot project multi-line text through a lookup column (blank) and a row cannot open another list's item in a panel. So the flow copies the client's StandingNotes (Clients field_14) into a Client notes column (ClientNotes) on each new ticket, and the existing tickets were back-filled. Notes stays for per-ticket notes. A later edit to a client's standing note does not reach existing tickets (a sync flow would be needed).

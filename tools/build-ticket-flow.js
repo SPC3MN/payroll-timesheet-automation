@@ -30,7 +30,8 @@
  *
  * SharePoint internal names used (Clients list was created by a CSV import):
  *   Clients: ID, Title, field_0 Company, field_4 Frequency, field_6 ReportDelivery,
- *            field_8..field_13 client-specific steps, field_15 Active, MonthlyPayDay
+ *            field_8..field_13 client-specific steps, field_14 StandingNotes (copied to the
+ *            ticket's ClientNotes), field_15 Active, MonthlyPayDay
  */
 
 const fs = require('fs');
@@ -130,6 +131,7 @@ const createTicket = sp('PostItem', {
   table: cfg.ticketsListId,
   'item/Title': `@{${client('Title')}} · @{${schedule}} · @{formatDateTime(variables('PeriodStart'), 'MMM d')}–@{formatDateTime(variables('PeriodEnd'), 'MMM d, yyyy')}`,
   'item/Client/Id': `@${client('ID')}`,
+  'item/ClientNotes': `@{${client('field_14')}}`,
   'item/Company/Value': `@first(${client('field_0')})?['Value']`,
   'item/Schedule/Value': `@${schedule}`,
   'item/Status/Value': 'Open',
