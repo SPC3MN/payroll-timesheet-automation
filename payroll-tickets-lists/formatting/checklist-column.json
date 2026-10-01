@@ -41,7 +41,8 @@
       "customRowAction": {
         "action": "setValue",
         "actionInput": {
-          "TimecardsIn": "=if([$TimecardsIn] == true, 'false', 'true')"
+          "TimecardsIn": "=if([$TimecardsIn] == true, 'false', 'true')",
+          "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
         }
       }
     },
@@ -67,7 +68,8 @@
       "customRowAction": {
         "action": "setValue",
         "actionInput": {
-          "SendForApproval": "=if([$SendForApproval] == 'Done', 'To do', 'Done')"
+          "SendForApproval": "=if([$SendForApproval] == 'Done', 'To do', 'Done')",
+          "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
         }
       }
     },
@@ -93,7 +95,8 @@
       "customRowAction": {
         "action": "setValue",
         "actionInput": {
-          "SendPreviewForApproval": "=if([$SendPreviewForApproval] == 'Done', 'To do', 'Done')"
+          "SendPreviewForApproval": "=if([$SendPreviewForApproval] == 'Done', 'To do', 'Done')",
+          "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
         }
       }
     },
@@ -119,7 +122,8 @@
       "customRowAction": {
         "action": "setValue",
         "actionInput": {
-          "PayrollDone": "=if([$PayrollDone] == true, 'false', 'true')"
+          "PayrollDone": "=if([$PayrollDone] == true, 'false', 'true')",
+          "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
         }
       }
     },
@@ -145,7 +149,8 @@
       "customRowAction": {
         "action": "setValue",
         "actionInput": {
-          "ACH": "=if([$ACH] == 'Done', 'To do', 'Done')"
+          "ACH": "=if([$ACH] == 'Done', 'To do', 'Done')",
+          "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
         }
       }
     },
@@ -171,7 +176,8 @@
       "customRowAction": {
         "action": "setValue",
         "actionInput": {
-          "JobCostReport": "=if([$JobCostReport] == 'Done', 'To do', 'Done')"
+          "JobCostReport": "=if([$JobCostReport] == 'Done', 'To do', 'Done')",
+          "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
         }
       }
     },
@@ -197,7 +203,8 @@
       "customRowAction": {
         "action": "setValue",
         "actionInput": {
-          "Report": "=if([$Report] == 'Done', 'To do', 'Done')"
+          "Report": "=if([$Report] == 'Done', 'To do', 'Done')",
+          "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
         }
       }
     },
@@ -223,7 +230,8 @@
       "customRowAction": {
         "action": "setValue",
         "actionInput": {
-          "CouncilOnAgingReport": "=if([$CouncilOnAgingReport] == 'Done', 'To do', 'Done')"
+          "CouncilOnAgingReport": "=if([$CouncilOnAgingReport] == 'Done', 'To do', 'Done')",
+          "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
         }
       }
     },
@@ -249,7 +257,8 @@
       "customRowAction": {
         "action": "setValue",
         "actionInput": {
-          "ReportSent": "=if([$ReportSent] == 'Done', 'To do', 'Done')"
+          "ReportSent": "=if([$ReportSent] == 'Done', 'To do', 'Done')",
+          "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
         }
       }
     },
@@ -275,7 +284,8 @@
       "customRowAction": {
         "action": "setValue",
         "actionInput": {
-          "BillingDone": "=if([$BillingDone] == true, 'false', 'true')"
+          "BillingDone": "=if([$BillingDone] == true, 'false', 'true')",
+          "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
         }
       }
     },
@@ -286,7 +296,7 @@
         "title": "Every step is done: close this ticket"
       },
       "style": {
-        "display": "=if([$Status] == 'Open' && [$TimecardsIn] == true && [$SendForApproval] != 'To do' && [$SendPreviewForApproval] != 'To do' && [$PayrollDone] == true && [$ACH] != 'To do' && [$JobCostReport] != 'To do' && [$Report] != 'To do' && [$CouncilOnAgingReport] != 'To do' && [$ReportSent] != 'To do' && [$BillingDone] == true, 'inline-block', 'none')",
+        "display": "=if([$Status] == 'Complete' || [$Status] == 'No payroll this period', 'none', if([$TimecardsIn] == true && [$SendForApproval] != 'To do' && [$SendPreviewForApproval] != 'To do' && [$PayrollDone] == true && [$ACH] != 'To do' && [$JobCostReport] != 'To do' && [$Report] != 'To do' && [$CouncilOnAgingReport] != 'To do' && [$ReportSent] != 'To do' && [$BillingDone] == true, 'inline-block', 'none'))",
         "padding": "3px 10px",
         "margin": "2px 0 2px 4px",
         "border-radius": "4px",

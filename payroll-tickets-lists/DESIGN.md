@@ -38,7 +38,7 @@ column) are typed into SharePoint by hand from `local/sources.json`.
 | PeriodStart, PeriodEnd, PayDate | Date | |
 | DueDate | Date | When timecards are needed by (default: PayDate − 3 working days; adjustable) |
 | TicketKey | Single line of text, **enforce unique values** | `<Clients ID>-<Schedule>-<PeriodStart yyyy-MM-dd>`; stops flow 1 making duplicates |
-| Status | Choice | Open, Complete, No payroll this period |
+| Status | Choice | Not started, In progress, Complete, No payroll this period. New tickets start as Not started; ticking a step moves them to In progress; Mark complete sets Complete |
 | AssignedTo | Person, **multiple selections** | Optional (not required) unless the staff decide otherwise |
 | TimecardsIn, PayrollDone, BillingDone | Yes/No | The three general steps every ticket has |
 | ReportSent | Choice | To do / Done / N/A. N/A when the client's ReportDelivery is None |

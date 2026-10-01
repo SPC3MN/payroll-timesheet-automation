@@ -62,7 +62,8 @@ const chip = step => {
       color: `=if(${d}, '#0e700e', '#323130')`,
       border: `=if(${d}, '1px solid #9fd89f', '1px solid #8a8886')`,
     },
-    customRowAction: { action: 'setValue', actionInput: { [f]: toggle(step) } },
+    // Ticking a step also moves a Not started ticket to In progress.
+    customRowAction: { action: 'setValue', actionInput: { [f]: toggle(step), Status: "=if([$Status] == 'Not started', 'In progress', [$Status])" } },
   };
 };
 
@@ -88,7 +89,7 @@ const column = {
       txtContent: 'Mark complete',
       attributes: { title: 'Every step is done: close this ticket' },
       style: {
-        display: `=if([$Status] == 'Open' && ${allDone}, 'inline-block', 'none')`,
+        display: `=if([$Status] == 'Complete' || [$Status] == 'No payroll this period', 'none', if(${allDone}, 'inline-block', 'none'))`,
         padding: '3px 10px',
         margin: '2px 0 2px 4px',
         'border-radius': '4px',
@@ -108,19 +109,19 @@ const column = {
 // (setValue only saves fields that are in the view); column headers are hidden so they don't show.
 const DAY = 24 * 60 * 60 * 1000;
 // The view's CustomFormatter is stored as XML, so view JSON must avoid & and < characters:
-// conditions are nested ifs (no &&) and comparisons are written with >.
-const overdue = `if([$TimecardsIn] == false, if(Number([$DueDate]) > 0, if(Number(@now) > Number([$DueDate]), 1, 0), 0), 0) == 1`;
+// Overdue only once the due day has fully passed. conditions are nested ifs (no &&) and comparisons are written with >.
+const overdue = `if([$TimecardsIn] == false, if(Number([$DueDate]) > 0, if(Number(@now) > Number([$DueDate]) + 86400000, 1, 0), 0), 0) == 1`;
 const paySoon = `if(Number([$PayDate]) > 0, if(${2 * DAY} > Number([$PayDate]) - Number(@now), 1, 0), 0) == 1`;
 const ready = `[$Checklist] == 'Ready to close'`;
 // np: shown when the ticket's "No payroll this period" box is ticked.
 const urgency = (red, amber, green, none, np = none) =>
   `=if([$NoPayroll] == true, '${np}', if(${ready}, '${green}', if(${overdue}, '${red}', if(${paySoon}, '${amber}', '${none}'))))`;
 const short = f => `=if([$${f}] == '', '-', toLocaleDateString([$${f}]))`;
-// "Label: value" pair, e.g. Phone: 360-0000.
-const labelled = (label, field) => ({
+// "Label: value" pair, e.g. Phone: 360-0000. `value` is a field name or, starting with '=', an expression.
+const labelled = (label, value) => ({
   elmType: 'span',
   style: { 'padding-left': '14px', 'font-size': '12px', color: '#605e5c' },
-  children: [{ elmType: 'span', txtContent: label + ': ', style: { 'font-weight': '600', color: '#323130' } }, { elmType: 'span', txtContent: '[$' + field + ']' }],
+  children: [{ elmType: 'span', txtContent: label + ': ', style: { 'font-weight': '700', color: '#201f1e' } }, { elmType: 'span', txtContent: value.startsWith('=') ? value : '[$' + value + ']' }],
 });
 const text = (txt, style) => ({ elmType: 'span', txtContent: txt, style });
 // The checklist labels, reused in the row layout with no current field and no && (see above).
@@ -130,7 +131,7 @@ const markComplete = rowChildren.find(c => c.txtContent === 'Mark complete');
 // Shown when every step is done, or straight away when the ticket is marked "No payroll this period".
 const stepsDone = STEPS.map(s => (s[2] === 'bool' ? done(s) : `[$${s[0]}] != 'To do'`))
   .reduceRight((inner, cond) => `if(${cond}, ${inner}, 'none')`, "'inline-block'");
-markComplete.style.display = `=if([$Status] == 'Open', if([$NoPayroll] == true, 'inline-block', ${stepsDone}), 'none')`;
+markComplete.style.display = `=if([$Status] == 'Complete', 'none', if([$Status] == 'No payroll this period', 'none', if([$NoPayroll] == true, 'inline-block', ${stepsDone})))`;
 // Two lines per ticket: title, badge and dates on the first; step labels on the second.
 const rows = {
   $schema: 'https://developer.microsoft.com/json-schemas/sp/v2/row-formatting.schema.json',
@@ -161,9 +162,9 @@ const rows = {
           text(urgency('Timecards overdue', 'Payday soon', 'Ready to close', '', 'No payroll this period'), {
             'font-size': '11px', 'font-weight': '600', color: urgency('#a4262c', '#8a5a00', '#0e700e', '#605e5c', '#323130'),
           }),
-          text("='Due ' + " + short('DueDate').slice(1) + " + '  Pay ' + " + short('PayDate').slice(1) +
-            " + '  ' + if([$AssignedTo] == '', 'Unassigned', [$AssignedTo.title])",
-            { 'font-size': '12px', color: '#605e5c' }),
+          labelled('Due', short('DueDate')),
+          labelled('Pay', short('PayDate')),
+          labelled('Assigned to', "=if([$AssignedTo] == '', 'Unassigned', [$AssignedTo.title])"),
         ],
       },
       {

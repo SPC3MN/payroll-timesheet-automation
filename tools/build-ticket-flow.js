@@ -126,15 +126,21 @@ for (const [name, [due, start, end, pay]] of Object.entries(periodCases)) {
 const step = f => `@if(equals(${client(f)}, true), 'To do', 'N/A')`;
 const reportSent = `@if(and(equals(length(${client('field_6')}), 1), equals(first(${client('field_6')})?['Value'], 'None')), 'N/A', 'To do')`;
 
+// The Clients notes column stores HTML; the ticket's Client notes column is plain text.
+const NL = "decodeUriComponent('%0A')";
+const htmlToText = x => [
+  ["'<br>'", NL], ["'<br/>'", NL], ["'</div>'", NL], ["'</p>'", NL], ["'<div>'", "''"], ["'<p>'", "''"],
+  ["'&#160;'", "' '"], ["'&#58;'", "':'"], ["'&amp;'", "'&'"], ["'&#39;'", "''''"], ["'&quot;'", "'\"'"],
+].reduce((acc, [from, to]) => `replace(${acc}, ${from}, ${to})`, `coalesce(${x}, '')`);
 const createTicket = sp('PostItem', {
   dataset: cfg.siteUrl,
   table: cfg.ticketsListId,
   'item/Title': `@{${client('Title')}} · @{${schedule}} · @{formatDateTime(variables('PeriodStart'), 'MMM d')}–@{formatDateTime(variables('PeriodEnd'), 'MMM d, yyyy')}`,
   'item/Client/Id': `@${client('ID')}`,
-  'item/ClientNotes': `@{${client('field_14')}}`,
+  'item/ClientNotes': `@${htmlToText(client('field_14'))}`,
   'item/Company/Value': `@first(${client('field_0')})?['Value']`,
   'item/Schedule/Value': `@${schedule}`,
-  'item/Status/Value': 'Open',
+  'item/Status/Value': 'Not started',
   'item/PeriodStart': "@variables('PeriodStart')",
   'item/PeriodEnd': "@variables('PeriodEnd')",
   'item/PayDate': "@variables('PayDate')",

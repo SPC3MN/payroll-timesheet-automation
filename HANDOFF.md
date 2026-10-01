@@ -274,3 +274,21 @@ marketplace. `.claude/settings.json` already enables it.
   Reading a view's CustomFormatter through REST returns `>` as `&gt;`: decode it before editing and
   writing it back, and never write `&` or `<`.
 - Client standing notes: SharePoint cannot project multi-line text through a lookup column (blank) and a row cannot open another list's item in a panel. So the flow copies the client's StandingNotes (Clients field_14) into a Client notes column (ClientNotes) on each new ticket, and the existing tickets were back-filled. Notes stays for per-ticket notes. A later edit to a client's standing note does not reach existing tickets (a sync flow would be needed).
+- Views are now only To do (default, `To do.aspx`), My tickets and Dashboard (the Board layout, renamed).
+  My tickets has the same columns and row layout as To do plus a filter Assigned to = [Me] and Status = Open.
+  The plain `AllItems.aspx` address no longer exists.
+- Due date now equals pay date (`dueDaysBeforePay` 0 in the flow config); a ticket shows overdue only once the
+  due day has fully passed.
+- ClientNotes is a plain-text column (the modern form showed rich text as raw `<div>` tags). The flow turns the
+  Clients HTML into text with a chain of `replace()` calls.
+- Dashboard (Board layout) cards now use the same layout as the To do rows (the card formatter has no
+  `designerConfig`/`templateId`; with them SharePoint rebuilds the cards from the field list and ignores the
+  custom layout). The view needs every step column, Status, NoPayroll, Client and the contact lookups.
+  Opening "Edit card layout" may reset the cards.
+- To do rows label Due, Pay and Assigned to in bold. The Notes column is now titled "Quick notes".
+- Client notes cannot be shown read-only in the ticket panel: a read-only column disappears from the edit
+  form, and a form header formatter cannot read a column that is not on the form.
+- Status choices are now Not started, In progress, Complete, No payroll this period (was Open, ...). The flow
+  creates tickets as Not started (re-import needed); ticking a step in a view moves Not started to In progress
+  (the step chips' setValue also sets Status); the To do and My tickets filter is Not started OR In progress;
+  the Dashboard buckets are Not started / In progress / Complete ("No payroll this period" bucket hidden).

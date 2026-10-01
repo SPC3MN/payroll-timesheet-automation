@@ -10,8 +10,8 @@
       "box-sizing": "border-box",
       "padding": "10px 16px",
       "border-bottom": "1px solid #edebe9",
-      "border-left": "=if([$NoPayroll] == true, '5px solid #8a8886', if([$Checklist] == 'Ready to close', '5px solid #0e700e', if(if([$TimecardsIn] == false, if(Number([$DueDate]) > 0, if(Number(@now) > Number([$DueDate]), 1, 0), 0), 0) == 1, '5px solid #d13438', if(if(Number([$PayDate]) > 0, if(172800000 > Number([$PayDate]) - Number(@now), 1, 0), 0) == 1, '5px solid #f7a21b', '5px solid #c8c6c4'))))",
-      "background-color": "=if([$NoPayroll] == true, '#f3f2f1', if([$Checklist] == 'Ready to close', '#f3faf3', if(if([$TimecardsIn] == false, if(Number([$DueDate]) > 0, if(Number(@now) > Number([$DueDate]), 1, 0), 0), 0) == 1, '#fdf3f4', if(if(Number([$PayDate]) > 0, if(172800000 > Number([$PayDate]) - Number(@now), 1, 0), 0) == 1, '#fffaf0', '#ffffff'))))"
+      "border-left": "=if([$NoPayroll] == true, '5px solid #8a8886', if([$Checklist] == 'Ready to close', '5px solid #0e700e', if(if([$TimecardsIn] == false, if(Number([$DueDate]) > 0, if(Number(@now) > Number([$DueDate]) + 86400000, 1, 0), 0), 0) == 1, '5px solid #d13438', if(if(Number([$PayDate]) > 0, if(172800000 > Number([$PayDate]) - Number(@now), 1, 0), 0) == 1, '5px solid #f7a21b', '5px solid #c8c6c4'))))",
+      "background-color": "=if([$NoPayroll] == true, '#f3f2f1', if([$Checklist] == 'Ready to close', '#f3faf3', if(if([$TimecardsIn] == false, if(Number([$DueDate]) > 0, if(Number(@now) > Number([$DueDate]) + 86400000, 1, 0), 0), 0) == 1, '#fdf3f4', if(if(Number([$PayDate]) > 0, if(172800000 > Number([$PayDate]) - Number(@now), 1, 0), 0) == 1, '#fffaf0', '#ffffff'))))"
     },
     "children": [
       {
@@ -43,20 +43,78 @@
           },
           {
             "elmType": "span",
-            "txtContent": "=if([$NoPayroll] == true, 'No payroll this period', if([$Checklist] == 'Ready to close', 'Ready to close', if(if([$TimecardsIn] == false, if(Number([$DueDate]) > 0, if(Number(@now) > Number([$DueDate]), 1, 0), 0), 0) == 1, 'Timecards overdue', if(if(Number([$PayDate]) > 0, if(172800000 > Number([$PayDate]) - Number(@now), 1, 0), 0) == 1, 'Payday soon', ''))))",
+            "txtContent": "=if([$NoPayroll] == true, 'No payroll this period', if([$Checklist] == 'Ready to close', 'Ready to close', if(if([$TimecardsIn] == false, if(Number([$DueDate]) > 0, if(Number(@now) > Number([$DueDate]) + 86400000, 1, 0), 0), 0) == 1, 'Timecards overdue', if(if(Number([$PayDate]) > 0, if(172800000 > Number([$PayDate]) - Number(@now), 1, 0), 0) == 1, 'Payday soon', ''))))",
             "style": {
               "font-size": "13px",
               "font-weight": "600",
-              "color": "=if([$NoPayroll] == true, '#323130', if([$Checklist] == 'Ready to close', '#0e700e', if(if([$TimecardsIn] == false, if(Number([$DueDate]) > 0, if(Number(@now) > Number([$DueDate]), 1, 0), 0), 0) == 1, '#a4262c', if(if(Number([$PayDate]) > 0, if(172800000 > Number([$PayDate]) - Number(@now), 1, 0), 0) == 1, '#8a5a00', '#605e5c'))))"
+              "color": "=if([$NoPayroll] == true, '#323130', if([$Checklist] == 'Ready to close', '#0e700e', if(if([$TimecardsIn] == false, if(Number([$DueDate]) > 0, if(Number(@now) > Number([$DueDate]) + 86400000, 1, 0), 0), 0) == 1, '#a4262c', if(if(Number([$PayDate]) > 0, if(172800000 > Number([$PayDate]) - Number(@now), 1, 0), 0) == 1, '#8a5a00', '#605e5c'))))"
             }
           },
           {
             "elmType": "span",
-            "txtContent": "='Due ' + if([$DueDate] == '', '-', toLocaleDateString([$DueDate])) + '  Pay ' + if([$PayDate] == '', '-', toLocaleDateString([$PayDate])) + '  ' + if([$AssignedTo] == '', 'Unassigned', [$AssignedTo.title])",
             "style": {
+              "padding-left": "14px",
               "font-size": "14px",
               "color": "#605e5c"
-            }
+            },
+            "children": [
+              {
+                "elmType": "span",
+                "txtContent": "Due: ",
+                "style": {
+                  "font-weight": "700",
+                  "color": "#201f1e"
+                }
+              },
+              {
+                "elmType": "span",
+                "txtContent": "=if([$DueDate] == '', '-', toLocaleDateString([$DueDate]))"
+              }
+            ]
+          },
+          {
+            "elmType": "span",
+            "style": {
+              "padding-left": "14px",
+              "font-size": "14px",
+              "color": "#605e5c"
+            },
+            "children": [
+              {
+                "elmType": "span",
+                "txtContent": "Pay: ",
+                "style": {
+                  "font-weight": "700",
+                  "color": "#201f1e"
+                }
+              },
+              {
+                "elmType": "span",
+                "txtContent": "=if([$PayDate] == '', '-', toLocaleDateString([$PayDate]))"
+              }
+            ]
+          },
+          {
+            "elmType": "span",
+            "style": {
+              "padding-left": "14px",
+              "font-size": "14px",
+              "color": "#605e5c"
+            },
+            "children": [
+              {
+                "elmType": "span",
+                "txtContent": "Assigned to: ",
+                "style": {
+                  "font-weight": "700",
+                  "color": "#201f1e"
+                }
+              },
+              {
+                "elmType": "span",
+                "txtContent": "=if([$AssignedTo] == '', 'Unassigned', [$AssignedTo.title])"
+              }
+            ]
           }
         ]
       },
@@ -102,7 +160,8 @@
                 "customRowAction": {
                   "action": "setValue",
                   "actionInput": {
-                    "TimecardsIn": "=if([$TimecardsIn] == true, 'false', 'true')"
+                    "TimecardsIn": "=if([$TimecardsIn] == true, 'false', 'true')",
+                    "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
                   }
                 }
               },
@@ -131,7 +190,8 @@
                 "customRowAction": {
                   "action": "setValue",
                   "actionInput": {
-                    "SendForApproval": "=if([$SendForApproval] == 'Done', 'To do', 'Done')"
+                    "SendForApproval": "=if([$SendForApproval] == 'Done', 'To do', 'Done')",
+                    "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
                   }
                 }
               },
@@ -160,7 +220,8 @@
                 "customRowAction": {
                   "action": "setValue",
                   "actionInput": {
-                    "SendPreviewForApproval": "=if([$SendPreviewForApproval] == 'Done', 'To do', 'Done')"
+                    "SendPreviewForApproval": "=if([$SendPreviewForApproval] == 'Done', 'To do', 'Done')",
+                    "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
                   }
                 }
               },
@@ -189,7 +250,8 @@
                 "customRowAction": {
                   "action": "setValue",
                   "actionInput": {
-                    "PayrollDone": "=if([$PayrollDone] == true, 'false', 'true')"
+                    "PayrollDone": "=if([$PayrollDone] == true, 'false', 'true')",
+                    "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
                   }
                 }
               },
@@ -218,7 +280,8 @@
                 "customRowAction": {
                   "action": "setValue",
                   "actionInput": {
-                    "ACH": "=if([$ACH] == 'Done', 'To do', 'Done')"
+                    "ACH": "=if([$ACH] == 'Done', 'To do', 'Done')",
+                    "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
                   }
                 }
               },
@@ -247,7 +310,8 @@
                 "customRowAction": {
                   "action": "setValue",
                   "actionInput": {
-                    "JobCostReport": "=if([$JobCostReport] == 'Done', 'To do', 'Done')"
+                    "JobCostReport": "=if([$JobCostReport] == 'Done', 'To do', 'Done')",
+                    "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
                   }
                 }
               },
@@ -276,7 +340,8 @@
                 "customRowAction": {
                   "action": "setValue",
                   "actionInput": {
-                    "Report": "=if([$Report] == 'Done', 'To do', 'Done')"
+                    "Report": "=if([$Report] == 'Done', 'To do', 'Done')",
+                    "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
                   }
                 }
               },
@@ -305,7 +370,8 @@
                 "customRowAction": {
                   "action": "setValue",
                   "actionInput": {
-                    "CouncilOnAgingReport": "=if([$CouncilOnAgingReport] == 'Done', 'To do', 'Done')"
+                    "CouncilOnAgingReport": "=if([$CouncilOnAgingReport] == 'Done', 'To do', 'Done')",
+                    "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
                   }
                 }
               },
@@ -334,7 +400,8 @@
                 "customRowAction": {
                   "action": "setValue",
                   "actionInput": {
-                    "ReportSent": "=if([$ReportSent] == 'Done', 'To do', 'Done')"
+                    "ReportSent": "=if([$ReportSent] == 'Done', 'To do', 'Done')",
+                    "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
                   }
                 }
               },
@@ -363,7 +430,8 @@
                 "customRowAction": {
                   "action": "setValue",
                   "actionInput": {
-                    "BillingDone": "=if([$BillingDone] == true, 'false', 'true')"
+                    "BillingDone": "=if([$BillingDone] == true, 'false', 'true')",
+                    "Status": "=if([$Status] == 'Not started', 'In progress', [$Status])"
                   }
                 }
               }
@@ -376,7 +444,7 @@
               "title": "Every step is done: close this ticket"
             },
             "style": {
-              "display": "=if([$Status] == 'Open', if([$NoPayroll] == true, 'inline-block', if([$TimecardsIn] == true, if([$SendForApproval] != 'To do', if([$SendPreviewForApproval] != 'To do', if([$PayrollDone] == true, if([$ACH] != 'To do', if([$JobCostReport] != 'To do', if([$Report] != 'To do', if([$CouncilOnAgingReport] != 'To do', if([$ReportSent] != 'To do', if([$BillingDone] == true, 'inline-block', 'none'), 'none'), 'none'), 'none'), 'none'), 'none'), 'none'), 'none'), 'none'), 'none')), 'none')",
+              "display": "=if([$Status] == 'Complete', 'none', if([$Status] == 'No payroll this period', 'none', if([$NoPayroll] == true, 'inline-block', if([$TimecardsIn] == true, if([$SendForApproval] != 'To do', if([$SendPreviewForApproval] != 'To do', if([$PayrollDone] == true, if([$ACH] != 'To do', if([$JobCostReport] != 'To do', if([$Report] != 'To do', if([$CouncilOnAgingReport] != 'To do', if([$ReportSent] != 'To do', if([$BillingDone] == true, 'inline-block', 'none'), 'none'), 'none'), 'none'), 'none'), 'none'), 'none'), 'none'), 'none'), 'none'))))",
               "padding": "6px 14px",
               "margin": "4px 0 4px 6px",
               "border-radius": "4px",
@@ -412,8 +480,8 @@
                 "elmType": "span",
                 "txtContent": "Contact: ",
                 "style": {
-                  "font-weight": "600",
-                  "color": "#323130"
+                  "font-weight": "700",
+                  "color": "#201f1e"
                 }
               },
               {
@@ -434,8 +502,8 @@
                 "elmType": "span",
                 "txtContent": "Phone: ",
                 "style": {
-                  "font-weight": "600",
-                  "color": "#323130"
+                  "font-weight": "700",
+                  "color": "#201f1e"
                 }
               },
               {
@@ -456,8 +524,8 @@
                 "elmType": "span",
                 "txtContent": "Report: ",
                 "style": {
-                  "font-weight": "600",
-                  "color": "#323130"
+                  "font-weight": "700",
+                  "color": "#201f1e"
                 }
               },
               {
