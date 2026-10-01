@@ -1,0 +1,410 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/row-formatting.schema.json",
+  "hideSelection": true,
+  "hideColumnHeader": true,
+  "rowFormatter": {
+    "elmType": "div",
+    "style": {
+      "display": "block",
+      "width": "100%",
+      "box-sizing": "border-box",
+      "padding": "4px 12px",
+      "border-bottom": "1px solid #edebe9",
+      "border-left": "=if([$Checklist] == 'Ready to close', '5px solid #0e700e', if(if([$TimecardsIn] == false, if(Number([$DueDate]) > 0, if(Number(@now) > Number([$DueDate]), 1, 0), 0), 0) == 1, '5px solid #d13438', if(if(Number([$PayDate]) > 0, if(172800000 > Number([$PayDate]) - Number(@now), 1, 0), 0) == 1, '5px solid #f7a21b', '5px solid #c8c6c4')))",
+      "background-color": "=if([$Checklist] == 'Ready to close', '#f3faf3', if(if([$TimecardsIn] == false, if(Number([$DueDate]) > 0, if(Number(@now) > Number([$DueDate]), 1, 0), 0), 0) == 1, '#fdf3f4', if(if(Number([$PayDate]) > 0, if(172800000 > Number([$PayDate]) - Number(@now), 1, 0), 0) == 1, '#fffaf0', '#ffffff')))"
+    },
+    "children": [
+      {
+        "elmType": "div",
+        "style": {
+          "display": "flex",
+          "flex-wrap": "wrap",
+          "align-items": "baseline",
+          "column-gap": "12px",
+          "width": "100%"
+        },
+        "children": [
+          {
+            "elmType": "a",
+            "txtContent": "[$Title]",
+            "attributes": {
+              "href": "=@currentWeb + '/Lists/PayrollTickets/DispForm.aspx?ID=' + [$ID]",
+              "target": "_blank"
+            },
+            "style": {
+              "font-weight": "600",
+              "font-size": "14px",
+              "color": "#201f1e",
+              "text-decoration": "none"
+            }
+          },
+          {
+            "elmType": "span",
+            "txtContent": "=if([$Checklist] == 'Ready to close', 'Ready to close', if(if([$TimecardsIn] == false, if(Number([$DueDate]) > 0, if(Number(@now) > Number([$DueDate]), 1, 0), 0), 0) == 1, 'Timecards overdue', if(if(Number([$PayDate]) > 0, if(172800000 > Number([$PayDate]) - Number(@now), 1, 0), 0) == 1, 'Payday soon', '')))",
+            "style": {
+              "font-size": "11px",
+              "font-weight": "600",
+              "color": "=if([$Checklist] == 'Ready to close', '#0e700e', if(if([$TimecardsIn] == false, if(Number([$DueDate]) > 0, if(Number(@now) > Number([$DueDate]), 1, 0), 0), 0) == 1, '#a4262c', if(if(Number([$PayDate]) > 0, if(172800000 > Number([$PayDate]) - Number(@now), 1, 0), 0) == 1, '#8a5a00', '#605e5c')))"
+            }
+          },
+          {
+            "elmType": "span",
+            "txtContent": "='Due ' + if([$DueDate] == '', '-', toLocaleDateString([$DueDate])) + '  Pay ' + if([$PayDate] == '', '-', toLocaleDateString([$PayDate])) + '  ' + if([$AssignedTo] == '', 'Unassigned', [$AssignedTo.title])",
+            "style": {
+              "font-size": "12px",
+              "color": "#605e5c"
+            }
+          }
+        ]
+      },
+      {
+        "elmType": "div",
+        "style": {
+          "display": "flex",
+          "flex-wrap": "wrap",
+          "align-items": "center",
+          "width": "100%"
+        },
+        "children": [
+          {
+            "elmType": "button",
+            "txtContent": "=if([$TimecardsIn] == true, '✓ ', '○ ') + 'Timecards'",
+            "attributes": {
+              "title": "=if([$TimecardsIn] == true, 'Done: click to undo', 'Click when done')"
+            },
+            "style": {
+              "display": "inline-block",
+              "padding": "2px 8px",
+              "margin": "2px 4px 2px 0",
+              "border-radius": "12px",
+              "font-size": "12px",
+              "line-height": "18px",
+              "cursor": "pointer",
+              "white-space": "nowrap",
+              "background-color": "=if([$TimecardsIn] == true, '#dff6dd', '#ffffff')",
+              "color": "=if([$TimecardsIn] == true, '#0e700e', '#323130')",
+              "border": "=if([$TimecardsIn] == true, '1px solid #9fd89f', '1px solid #8a8886')"
+            },
+            "customRowAction": {
+              "action": "setValue",
+              "actionInput": {
+                "TimecardsIn": "=if([$TimecardsIn] == true, 'false', 'true')"
+              }
+            }
+          },
+          {
+            "elmType": "button",
+            "txtContent": "=if([$SendForApproval] == 'Done', '✓ ', '○ ') + 'Send for approval'",
+            "attributes": {
+              "title": "=if([$SendForApproval] == 'Done', 'Done: click to undo', 'Click when done')"
+            },
+            "style": {
+              "display": "=if([$SendForApproval] != 'N/A', 'inline-block', 'none')",
+              "padding": "2px 8px",
+              "margin": "2px 4px 2px 0",
+              "border-radius": "12px",
+              "font-size": "12px",
+              "line-height": "18px",
+              "cursor": "pointer",
+              "white-space": "nowrap",
+              "background-color": "=if([$SendForApproval] == 'Done', '#dff6dd', '#ffffff')",
+              "color": "=if([$SendForApproval] == 'Done', '#0e700e', '#323130')",
+              "border": "=if([$SendForApproval] == 'Done', '1px solid #9fd89f', '1px solid #8a8886')"
+            },
+            "customRowAction": {
+              "action": "setValue",
+              "actionInput": {
+                "SendForApproval": "=if([$SendForApproval] == 'Done', 'To do', 'Done')"
+              }
+            }
+          },
+          {
+            "elmType": "button",
+            "txtContent": "=if([$SendPreviewForApproval] == 'Done', '✓ ', '○ ') + 'Preview approval'",
+            "attributes": {
+              "title": "=if([$SendPreviewForApproval] == 'Done', 'Done: click to undo', 'Click when done')"
+            },
+            "style": {
+              "display": "=if([$SendPreviewForApproval] != 'N/A', 'inline-block', 'none')",
+              "padding": "2px 8px",
+              "margin": "2px 4px 2px 0",
+              "border-radius": "12px",
+              "font-size": "12px",
+              "line-height": "18px",
+              "cursor": "pointer",
+              "white-space": "nowrap",
+              "background-color": "=if([$SendPreviewForApproval] == 'Done', '#dff6dd', '#ffffff')",
+              "color": "=if([$SendPreviewForApproval] == 'Done', '#0e700e', '#323130')",
+              "border": "=if([$SendPreviewForApproval] == 'Done', '1px solid #9fd89f', '1px solid #8a8886')"
+            },
+            "customRowAction": {
+              "action": "setValue",
+              "actionInput": {
+                "SendPreviewForApproval": "=if([$SendPreviewForApproval] == 'Done', 'To do', 'Done')"
+              }
+            }
+          },
+          {
+            "elmType": "button",
+            "txtContent": "=if([$PayrollDone] == true, '✓ ', '○ ') + 'Payroll'",
+            "attributes": {
+              "title": "=if([$PayrollDone] == true, 'Done: click to undo', 'Click when done')"
+            },
+            "style": {
+              "display": "inline-block",
+              "padding": "2px 8px",
+              "margin": "2px 4px 2px 0",
+              "border-radius": "12px",
+              "font-size": "12px",
+              "line-height": "18px",
+              "cursor": "pointer",
+              "white-space": "nowrap",
+              "background-color": "=if([$PayrollDone] == true, '#dff6dd', '#ffffff')",
+              "color": "=if([$PayrollDone] == true, '#0e700e', '#323130')",
+              "border": "=if([$PayrollDone] == true, '1px solid #9fd89f', '1px solid #8a8886')"
+            },
+            "customRowAction": {
+              "action": "setValue",
+              "actionInput": {
+                "PayrollDone": "=if([$PayrollDone] == true, 'false', 'true')"
+              }
+            }
+          },
+          {
+            "elmType": "button",
+            "txtContent": "=if([$ACH] == 'Done', '✓ ', '○ ') + 'ACH'",
+            "attributes": {
+              "title": "=if([$ACH] == 'Done', 'Done: click to undo', 'Click when done')"
+            },
+            "style": {
+              "display": "=if([$ACH] != 'N/A', 'inline-block', 'none')",
+              "padding": "2px 8px",
+              "margin": "2px 4px 2px 0",
+              "border-radius": "12px",
+              "font-size": "12px",
+              "line-height": "18px",
+              "cursor": "pointer",
+              "white-space": "nowrap",
+              "background-color": "=if([$ACH] == 'Done', '#dff6dd', '#ffffff')",
+              "color": "=if([$ACH] == 'Done', '#0e700e', '#323130')",
+              "border": "=if([$ACH] == 'Done', '1px solid #9fd89f', '1px solid #8a8886')"
+            },
+            "customRowAction": {
+              "action": "setValue",
+              "actionInput": {
+                "ACH": "=if([$ACH] == 'Done', 'To do', 'Done')"
+              }
+            }
+          },
+          {
+            "elmType": "button",
+            "txtContent": "=if([$JobCostReport] == 'Done', '✓ ', '○ ') + 'Job cost report'",
+            "attributes": {
+              "title": "=if([$JobCostReport] == 'Done', 'Done: click to undo', 'Click when done')"
+            },
+            "style": {
+              "display": "=if([$JobCostReport] != 'N/A', 'inline-block', 'none')",
+              "padding": "2px 8px",
+              "margin": "2px 4px 2px 0",
+              "border-radius": "12px",
+              "font-size": "12px",
+              "line-height": "18px",
+              "cursor": "pointer",
+              "white-space": "nowrap",
+              "background-color": "=if([$JobCostReport] == 'Done', '#dff6dd', '#ffffff')",
+              "color": "=if([$JobCostReport] == 'Done', '#0e700e', '#323130')",
+              "border": "=if([$JobCostReport] == 'Done', '1px solid #9fd89f', '1px solid #8a8886')"
+            },
+            "customRowAction": {
+              "action": "setValue",
+              "actionInput": {
+                "JobCostReport": "=if([$JobCostReport] == 'Done', 'To do', 'Done')"
+              }
+            }
+          },
+          {
+            "elmType": "button",
+            "txtContent": "=if([$Report] == 'Done', '✓ ', '○ ') + 'Report'",
+            "attributes": {
+              "title": "=if([$Report] == 'Done', 'Done: click to undo', 'Click when done')"
+            },
+            "style": {
+              "display": "=if([$Report] != 'N/A', 'inline-block', 'none')",
+              "padding": "2px 8px",
+              "margin": "2px 4px 2px 0",
+              "border-radius": "12px",
+              "font-size": "12px",
+              "line-height": "18px",
+              "cursor": "pointer",
+              "white-space": "nowrap",
+              "background-color": "=if([$Report] == 'Done', '#dff6dd', '#ffffff')",
+              "color": "=if([$Report] == 'Done', '#0e700e', '#323130')",
+              "border": "=if([$Report] == 'Done', '1px solid #9fd89f', '1px solid #8a8886')"
+            },
+            "customRowAction": {
+              "action": "setValue",
+              "actionInput": {
+                "Report": "=if([$Report] == 'Done', 'To do', 'Done')"
+              }
+            }
+          },
+          {
+            "elmType": "button",
+            "txtContent": "=if([$CouncilOnAgingReport] == 'Done', '✓ ', '○ ') + 'Council on Aging'",
+            "attributes": {
+              "title": "=if([$CouncilOnAgingReport] == 'Done', 'Done: click to undo', 'Click when done')"
+            },
+            "style": {
+              "display": "=if([$CouncilOnAgingReport] != 'N/A', 'inline-block', 'none')",
+              "padding": "2px 8px",
+              "margin": "2px 4px 2px 0",
+              "border-radius": "12px",
+              "font-size": "12px",
+              "line-height": "18px",
+              "cursor": "pointer",
+              "white-space": "nowrap",
+              "background-color": "=if([$CouncilOnAgingReport] == 'Done', '#dff6dd', '#ffffff')",
+              "color": "=if([$CouncilOnAgingReport] == 'Done', '#0e700e', '#323130')",
+              "border": "=if([$CouncilOnAgingReport] == 'Done', '1px solid #9fd89f', '1px solid #8a8886')"
+            },
+            "customRowAction": {
+              "action": "setValue",
+              "actionInput": {
+                "CouncilOnAgingReport": "=if([$CouncilOnAgingReport] == 'Done', 'To do', 'Done')"
+              }
+            }
+          },
+          {
+            "elmType": "button",
+            "txtContent": "=if([$ReportSent] == 'Done', '✓ ', '○ ') + 'Send report'",
+            "attributes": {
+              "title": "=if([$ReportSent] == 'Done', 'Done: click to undo', 'Click when done')"
+            },
+            "style": {
+              "display": "=if([$ReportSent] != 'N/A', 'inline-block', 'none')",
+              "padding": "2px 8px",
+              "margin": "2px 4px 2px 0",
+              "border-radius": "12px",
+              "font-size": "12px",
+              "line-height": "18px",
+              "cursor": "pointer",
+              "white-space": "nowrap",
+              "background-color": "=if([$ReportSent] == 'Done', '#dff6dd', '#ffffff')",
+              "color": "=if([$ReportSent] == 'Done', '#0e700e', '#323130')",
+              "border": "=if([$ReportSent] == 'Done', '1px solid #9fd89f', '1px solid #8a8886')"
+            },
+            "customRowAction": {
+              "action": "setValue",
+              "actionInput": {
+                "ReportSent": "=if([$ReportSent] == 'Done', 'To do', 'Done')"
+              }
+            }
+          },
+          {
+            "elmType": "button",
+            "txtContent": "=if([$BillingDone] == true, '✓ ', '○ ') + 'Billing'",
+            "attributes": {
+              "title": "=if([$BillingDone] == true, 'Done: click to undo', 'Click when done')"
+            },
+            "style": {
+              "display": "inline-block",
+              "padding": "2px 8px",
+              "margin": "2px 4px 2px 0",
+              "border-radius": "12px",
+              "font-size": "12px",
+              "line-height": "18px",
+              "cursor": "pointer",
+              "white-space": "nowrap",
+              "background-color": "=if([$BillingDone] == true, '#dff6dd', '#ffffff')",
+              "color": "=if([$BillingDone] == true, '#0e700e', '#323130')",
+              "border": "=if([$BillingDone] == true, '1px solid #9fd89f', '1px solid #8a8886')"
+            },
+            "customRowAction": {
+              "action": "setValue",
+              "actionInput": {
+                "BillingDone": "=if([$BillingDone] == true, 'false', 'true')"
+              }
+            }
+          },
+          {
+            "elmType": "button",
+            "txtContent": "Mark complete",
+            "attributes": {
+              "title": "Every step is done: close this ticket"
+            },
+            "style": {
+              "display": "=if([$Status] == 'Open', if([$TimecardsIn] == true, if([$SendForApproval] != 'To do', if([$SendPreviewForApproval] != 'To do', if([$PayrollDone] == true, if([$ACH] != 'To do', if([$JobCostReport] != 'To do', if([$Report] != 'To do', if([$CouncilOnAgingReport] != 'To do', if([$ReportSent] != 'To do', if([$BillingDone] == true, 'inline-block', 'none'), 'none'), 'none'), 'none'), 'none'), 'none'), 'none'), 'none'), 'none'), 'none'), 'none')",
+              "padding": "3px 10px",
+              "margin": "2px 0 2px 4px",
+              "border-radius": "4px",
+              "border": "none",
+              "cursor": "pointer",
+              "font-size": "12px",
+              "font-weight": "600",
+              "color": "#ffffff",
+              "background-color": "#0e700e"
+            },
+            "customRowAction": {
+              "action": "setValue",
+              "actionInput": {
+                "Status": "Complete"
+              }
+            }
+          },
+          {
+            "elmType": "button",
+            "txtContent": "No payroll this period",
+            "attributes": {
+              "title": "Close this ticket: the client has no hours to pay"
+            },
+            "style": {
+              "display": "=if([$Status] == 'Open', 'inline-block', 'none')",
+              "padding": "2px 8px",
+              "margin": "2px 4px",
+              "border-radius": "4px",
+              "font-size": "12px",
+              "cursor": "pointer",
+              "border": "1px solid #8a8886",
+              "background-color": "#ffffff",
+              "color": "#605e5c"
+            },
+            "customRowAction": {
+              "action": "setValue",
+              "actionInput": {
+                "Status": "No payroll this period"
+              }
+            }
+          },
+          {
+            "elmType": "span",
+            "txtContent": "[$Client_x003a_Contact]",
+            "style": {
+              "margin-left": "auto",
+              "padding-left": "12px",
+              "font-size": "12px",
+              "color": "#605e5c"
+            }
+          },
+          {
+            "elmType": "span",
+            "txtContent": "[$Client_x003a_Phone]",
+            "style": {
+              "padding-left": "12px",
+              "font-size": "12px",
+              "color": "#605e5c"
+            }
+          },
+          {
+            "elmType": "span",
+            "txtContent": "[$Report_x0020_delivery]",
+            "style": {
+              "padding-left": "12px",
+              "font-size": "12px",
+              "color": "#605e5c"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

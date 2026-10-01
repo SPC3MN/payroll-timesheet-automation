@@ -12,42 +12,33 @@
  * and "Week 2" the next 7; each week holds every weekday exactly once, so Mon1Hours is
  * the Monday that falls in week 1, and so on.
  *
+ * Client information (names, pay schedules, employees, NOTIFY_EMAIL, WEB_APP_URL) lives
+ * in `Local.gs`, which is gitignored: the repo is public. `Local.example.gs` is the template.
+ *
  * One-time setup:
  *   1. script.google.com → New project. Paste this file over Code.gs.
  *      Then File (+) → HTML → name it `Index` and paste Index.html into it.
- *   2. Edit CONFIG below (your clients, their pay schedules and employees).
+ *   2. Copy Local.example.gs to Local.gs and fill in your clients, their pay schedules
+ *      and employees. File (+) → Script → name it `Local` and paste Local.gs into it.
  *   3. Deploy → New deployment → type "Web app":
  *        Execute as: Me    Who has access: Anyone
  *      Approve the permissions prompt, then copy the Web app URL (ends in /exec).
- *   4. Paste that URL into CONFIG.WEB_APP_URL, save, pick `generateClientLinks` in
+ *   4. Paste that URL into WEB_APP_URL in Local, save, pick `generateClientLinks` in
  *      the function dropdown → Run. Client links are logged and emailed to you.
  *   5. Open a client link in a private/incognito window and submit a test.
  *
- * Any later code or CONFIG change (e.g. adding a client) only reaches clients after
+ * Any later code or Local change (e.g. adding a client) only reaches clients after
  * Deploy → Manage deployments → ✎ Edit → Version: "New version" → Deploy.
  * The URL stays the same. Then run `generateClientLinks` for the new client's link.
- * Removing a client from CONFIG (and redeploying) turns their link off.
+ * Removing a client from Local (and redeploying) turns their link off.
  */
 
 const CONFIG = {
   TITLE: 'Employee Hours Submission',
-  // Where CSVs are sent. Blank = the Google account that owns this script.
-  NOTIFY_EMAIL: '',
-  // The deployment's Web app URL (ends in /exec). Used only to build client links.
-  WEB_APP_URL: '',
   // Allow the plain URL (no client code), where the submitter types the client name.
   ALLOW_BLANK_LINK: true,
   // Most employees one submission can hold.
   MAX_EMPLOYEES: 50,
-  // One entry per client:
-  //   payPeriodStart: the first day of any one of their two-week pay periods (YYYY-MM-DD).
-  //     The page repeats it every 14 days and opens on the latest period that has ended.
-  //     Leave it out and the client picks the start date themselves.
-  //   employees: names pre-filled on that client's page (may be empty).
-  CLIENTS: {
-    'Example Client A': { payPeriodStart: '2026-01-07', employees: ['Example Employee 1', 'Example Employee 2'] },
-    'Example Client B': { payPeriodStart: '2026-01-02', employees: [] },
-  },
 };
 
 const HOUR_COLUMNS = [1, 2].flatMap(week =>
@@ -112,9 +103,9 @@ function submitTimesheet(payload) {
 
 function generateClientLinks() {
   assertOwner_();
-  const url = CONFIG.WEB_APP_URL || ScriptApp.getService().getUrl();
-  if (!url) throw new Error('Deploy the web app first, then paste its URL into CONFIG.WEB_APP_URL.');
-  Object.keys(CONFIG.CLIENTS).forEach(client => {
+  const url = local_().WEB_APP_URL || ScriptApp.getService().getUrl();
+  if (!url) throw new Error('Deploy the web app first, then paste its URL into WEB_APP_URL in Local.');
+  Object.keys(local_().CLIENTS).forEach(client => {
     const start = clientSettings_(client).payPeriodStart;
     if (start && !parseIsoDate_(start)) {
       throw new Error(`${client}: payPeriodStart "${start}" is not a date in YYYY-MM-DD form.`);
@@ -122,12 +113,12 @@ function generateClientLinks() {
   });
 
   const tokens = loadTokens_();
-  Object.keys(CONFIG.CLIENTS).forEach(client => {
+  Object.keys(local_().CLIENTS).forEach(client => {
     if (!tokens[client]) tokens[client] = Utilities.getUuid().replace(/-/g, '').slice(0, 16);
   });
   PropertiesService.getScriptProperties().setProperty('CLIENT_TOKENS', JSON.stringify(tokens));
 
-  const links = Object.keys(CONFIG.CLIENTS).map(client => `${client}\n${url}?c=${tokens[client]}`);
+  const links = Object.keys(local_().CLIENTS).map(client => `${client}\n${url}?c=${tokens[client]}`);
   const blank = CONFIG.ALLOW_BLANK_LINK ? `Blank link (client types their name):\n${url}\n\n` : '';
   const body = `${blank}Client links:\n\n${links.join('\n\n')}\n`;
   Logger.log(body);
@@ -216,9 +207,17 @@ function summaryText_(submission, rows, submitted, source, anchor) {
 // Helpers
 // ---------------------------------------------------------------------------
 
+/** The client settings from the `Local` script file (kept out of the public repo). */
+function local_() {
+  if (typeof LOCAL_CONFIG === 'undefined') {
+    throw new Error('Client settings are missing: add the Local script file (see Local.example.gs).');
+  }
+  return LOCAL_CONFIG;
+}
+
 /** Accepts the older `'Client': ['Employee', ...]` form as well. */
 function clientSettings_(client) {
-  const entry = CONFIG.CLIENTS[client];
+  const entry = local_().CLIENTS[client];
   if (Array.isArray(entry)) return { payPeriodStart: '', employees: entry };
   return { payPeriodStart: (entry && entry.payPeriodStart) || '', employees: (entry && entry.employees) || [] };
 }
@@ -226,7 +225,7 @@ function clientSettings_(client) {
 function clientForToken_(token) {
   const tokens = loadTokens_();
   const client = Object.keys(tokens).find(name => tokens[name] === token);
-  return client && Object.prototype.hasOwnProperty.call(CONFIG.CLIENTS, client) ? client : '';
+  return client && Object.prototype.hasOwnProperty.call(local_().CLIENTS, client) ? client : '';
 }
 
 function loadTokens_() {
@@ -257,5 +256,5 @@ function slug_(s) {
 }
 
 function notifyEmail_() {
-  return CONFIG.NOTIFY_EMAIL || Session.getEffectiveUser().getEmail();
+  return local_().NOTIFY_EMAIL || Session.getEffectiveUser().getEmail();
 }

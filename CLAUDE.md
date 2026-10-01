@@ -9,3 +9,7 @@ already made (and why), and the next steps.
 - `google-timesheet-form/`: the older Google Form version (v1), kept for reference.
 - `payroll-tickets-lists/` + `TimesheetSubmissions_v2.xlsx`: table layouts for the
   SharePoint Lists / Excel data. Every row is example data.
+- `tools/import-clients.js`: builds `local/clients.csv` from the staff's tracking workbooks.
+- `local/` (gitignored): the real client data. **This repo is public: never commit client
+  names, contacts, schedules, employees, emails or URLs.** Real web app settings go in
+  `google-timesheet-webapp/Local.gs` (gitignored), not `Code.gs`.

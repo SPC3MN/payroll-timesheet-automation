@@ -31,6 +31,32 @@ payroll tickets that staff work through. The pieces:
 - **Ticketing should use SharePoint Lists, not Excel.** Excel Online locks when several
   people edit and is unreliable from flows. Dataverse needs premium licences. See the
   plan below.
+- **All client information stays local; this repo is public.** Client names, the payroll
+  company's own business names, contacts, pay schedules, employees, email addresses and the
+  web app URL never get committed. They
+  live in the gitignored `local/` folder and `google-timesheet-webapp/Local.gs`. Committed
+  files hold only generic code, templates (`Local.example.gs`) and example data.
+
+## Local client data: `local/` (gitignored, never commit)
+
+- The payroll staff's weekly tracking workbooks, one per business name. The payroll
+  company works under two names (one business), each with its own client book.
+  `sources.json` names the businesses and says which sheets to read.
+  - Each row is one client: frequency, timecards in, phone, client (contact), additional
+    payroll report / delivery, payroll done, billing done, and standing notes.
+  - `⇃` means not done and `X` means done. The sheets are reset each cycle.
+  - The top rows hold one company-wide cycle: weekly Mon–Sun, bi-weekly two Mon–Sun weeks,
+    pay date the following Friday. Semi-monthly clients are paid on the 5th and 20th, and
+    monthly clients on their own day.
+- The staff's ticket checklist (`New Spreadsheet Checklist.docx`), and
+  `client-steps.json`, which lists the client-specific checklist steps.
+- `node tools/import-clients.js` merges the current and inactive sheets of both workbooks
+  into `local/clients.csv`, the seed for the SharePoint `Clients` list. It normalises
+  frequency and delivery, and keeps the text as written next to each normalised value.
+  Re-run it whenever the workbooks change.
+- Frequencies in use: weekly, bi-weekly, semi-monthly, monthly, quarterly. Some clients
+  run two schedules for different groups of employees (e.g. bi-weekly staff and monthly
+  owners). **The web app still only handles bi-weekly periods.**
 
 ## 1. Google web app (v2): `google-timesheet-webapp/`
 
@@ -39,10 +65,17 @@ payroll tickets that staff work through. The pieces:
 - Phone-friendly: one card per employee with a 7-column day grid per week, live
   Week 1 / Week 2 / period totals, and a grand total bar. Light mode only.
 - Each client gets their own link, `?c=<token>`. Tokens live in Script Properties
-  (`CLIENT_TOKENS`), and the client must also be listed in `CONFIG.CLIENTS`. Removing a
-  client from CONFIG and redeploying turns their link off.
-- Each client in `CONFIG.CLIENTS` has a `payPeriodStart`. The page repeats it every 14 days,
+  (`CLIENT_TOKENS`), and the client must also be listed in `CLIENTS` in `Local.gs`. Removing
+  a client from `Local.gs` and redeploying turns their link off.
+- **Employees are entered by hand by default.** A client with `employees: []` gets one
+  blank card and adds more with "+ Add employee". Names listed in `employees` are only
+  pre-filled, and can still be edited, removed or added to. The user will supply an
+  employee list per company.
+- Each client in `Local.gs` has a `payPeriodStart`. The page repeats it every 14 days,
   opens on the latest period that has ended, and has ‹ › buttons to step between periods.
+- Client settings (`CLIENTS`, `NOTIFY_EMAIL`, `WEB_APP_URL`) are in `Local.gs`, which is
+  gitignored. Copy `Local.example.gs` to create it and paste it into Apps Script as a script
+  file named `Local`.
 - Drafts are saved in the browser's localStorage. Each submission is emailed as a CSV
   attachment to `NOTIFY_EMAIL`, or to the script owner if that's blank.
 - It is a **separate Apps Script project** from the Form on purpose. The page can call any
@@ -50,8 +83,8 @@ payroll tickets that staff work through. The pieces:
 - Tested locally in Node and headless Chrome at 375px width. **Not deployed yet.**
 - **Deploy steps** are in the header comment of `Code.gs`:
   - Execute as: Me. Who has access: Anyone.
-  - Paste the `/exec` URL into `CONFIG.WEB_APP_URL`, then run `generateClientLinks`.
-- **Gotcha:** code or CONFIG edits only reach clients after Deploy → Manage deployments →
+  - Paste the `/exec` URL into `WEB_APP_URL` in `Local`, then run `generateClientLinks`.
+- **Gotcha:** code or `Local` edits only reach clients after Deploy → Manage deployments →
   Edit → Version "New version" → Deploy. The URL stays the same.
 - There was a private preview artifact on the old account. It won't open from a new account.
 
@@ -89,44 +122,117 @@ Power Apps Canvas App source in `.pa.yaml` format:
   Studio tab can go blank or stale. Hard-refresh the tab. To check the app itself is fine,
   `sync_canvas` to a scratch folder and confirm the controls are there.
 
-## 4. Payroll ticketing: recommended design (not built)
+## 4. Payroll ticketing: `payroll-tickets-lists/DESIGN.md` (designed, not built)
 
-Build it on **SharePoint Lists** (Microsoft Lists) with Power Automate. Both come with M365
-and need only standard connectors.
+**Current focus (2026-09-30):** the user wants the lists built first. The hours page waits.
 
-- **Lists** (layouts are in `payroll-tickets-lists/*.xlsx`; all rows are examples):
-  - `ClientEmployees` (Title, Client, Active): the real employee list. It should replace
-    `colEmployees` in the Canvas App.
-  - `PayrollTickets` (Title, Client, PayPeriodStart, PayPeriodEnd, Status, AssignedTo,
-    CompletedDate). Add a `DueDate` column and a unique key column (e.g.
-    `ClientA-2026-10-05`) so tickets can't be duplicated.
-  - `TicketTimesheets`: one row per employee per ticket. Make `TicketId` a **lookup**
-    column pointing to PayrollTickets.
-  - Suggested new `Clients` list: name, `PayPeriodStart` anchor, `Frequency`, contact.
-- **Statuses:** Open → Awaiting hours → Hours received → In review → Processed → Closed.
-  Add a board view grouped by Status.
-- **Flows:**
-  1. *Scheduled:* for each client, create the ticket for the current pay period, based on
-     each client's own biweekly schedule rather than a flat monthly recurrence.
-  2. *"When a new email arrives"* (shared inbox): read the CSV the Google web app sends,
-     find the ticket by Client + PayPeriodStart, add the TicketTimesheets rows, and set the
-     ticket to "Hours received". Don't use the HTTP trigger: it's premium.
-  3. *Optional:* send a reminder when a ticket is still "Awaiting hours" after its DueDate.
-- The Canvas App's Stage 2 Submit should write to `TicketTimesheets` instead of
-  `TimesheetSubmissions_v2.xlsx`.
+**Built so far (2026-09-30), on the `Payroll_Ticketing` team site in the user's tenant:**
+- `Clients` list: 150 rows (125 active) imported from `local/clients.csv`, and checked
+  against the CSV (counts, step flags, full note lengths).
+  - Internal column names are `field_0`… (Lists "From CSV" import): Company `field_0`,
+    Contact `field_2`, Phone `field_3`, Frequency `field_4`, ReportDelivery `field_6`,
+    ACH…CouncilOnAgingReport `field_8`–`field_13`, StandingNotes `field_14`,
+    Active `field_15`. Flows must use these names.
+  - Company is a checkbox choice (switching it to a single-choice dropdown hit a browser
+    confirm dialog). Frequency and ReportDelivery are multi-choice with fixed options.
+    StandingNotes is enhanced rich text.
+  - Import gotcha: combined values ("Biweekly;Monthly") arrive as one value. The 12 such
+    rows were re-saved by hand as separate values.
+  - Not added yet: `MonthlyPayDay`, `Email`, views.
+- `Payroll Tickets` list (URL `Lists/PayrollTickets`), empty and ready for the flow.
+  Internal names match DESIGN.md:
+  - `Client` is a required lookup to Clients, which also shows the client's Contact and
+    Phone. `Company` is a choice filled in by the flow (a choice can't be brought across
+    by lookup).
+  - `Schedule` and `Status` are required; Status defaults to Open.
+  - `ReportSent` defaults to "To do". The six client-specific steps (`ACH`,
+    `JobCostReport`, `Report`, `SendPreviewForApproval`, `SendForApproval`,
+    `CouncilOnAgingReport`) are To do / Done / N/A and default to N/A.
+  - `TimecardsIn`, `PayrollDone` and `BillingDone` are yes/no, default No.
+  - `PeriodStart` (required), `PeriodEnd`, `PayDate` (required) and `DueDate` are
+    date only.
+  - `TicketKey` is indexed and enforces unique values.
+  - `AssignedTo` allows several people. `Notes` is enhanced rich text.
+  - Indexed: Client, Status, PayDate, TicketKey.
+  - Display names have spaces ("Timecards in"); internal names don't.
+  - Default view **Open this cycle**: Status = Open, grouped by Company then Schedule,
+    sorted by Title, 500 rows.
+  - **My tickets**: Assigned to includes [Me] and Status = Open, sorted by Pay date.
+  - **Waiting on timecards**: Status = Open and Timecards in = No, sorted by Due date.
+  - **Board**: kanban by Status, with no filter, so completed tickets pile up in the
+    Complete column. Add a date filter later if it gets long.
+  - **All Items**: the untouched default list of every ticket.
+- Clients also has `MonthlyPayDay` (number, min 1) for monthly and quarterly clients.
+- **Ticket flow (in progress):** `node tools/build-ticket-flow.js` builds
+  `local/CreatePayrollTickets.zip`, a legacy Power Automate import package, from
+  `local/flow-config.json` (site URL, list IDs, placeholder schedule rules; all rules are
+  documented in the script header). The schedule rules were checked by simulation over
+  2026–2027.
+  - **Live since 2026-09-30** as "Create payroll tickets (weekly)": on, Mondays 06:00
+    Mountain time. Flow checker reports 0 errors.
+  - First run (manual, Wed 2026-09-30, acting as the week of Mon Sep 28) succeeded in
+    10m38s and created the 41 expected weekly tickets: period Sep 21–27, due Sep 29, paid
+    Oct 2. That's 27 under one company name and 14 under the other, with 41 unique keys.
+    Client steps (ACH / send-for-approval) and Report sent were set correctly. No other
+    schedule was due that week, so bi-weekly, semi-monthly, monthly and quarterly are
+    checked only by simulation so far.
+  - Slow (about 3 tickets/min) because both loops run one at a time to share the flow
+    variables. Speed-up: compute the period with per-iteration Compose actions instead
+    of variables, then let the client loop run in parallel.
+  - Package-format lessons, taken from a real export (a trivial "Format probe (delete me)"
+    flow, left turned off):
+    - The flow's folder under `Microsoft.Flow/flows/` and `flowAssets.assetPaths` use
+      the **package resource id** (the key in manifest.json), not the flow id. Getting
+      this wrong makes the import hang forever with no error.
+    - The zip holds only the five files, with no directory entries.
+    - `connectionReferences` carries `apiName` and
+      `isProcessSimpleApiReferenceConversionAlreadyDone`. The real connection name is in
+      `local/flow-config.json`.
+  - Test with `testRunDate` in the config (rebuild and re-import, or edit the TestRunDate
+    Compose in the designer) to make a manual run behave like a given week.
+  - Classic view form gotchas: Yes/No filter values must be "No"/"Yes" (not 0/1).
+    Native dropdowns can't be clicked open by automation; set them with form_input.
+  - Gotcha: the classic column pages sometimes raise a browser confirm dialog (e.g.
+    enforcing unique values on an unindexed column), and automation can't see it. Index
+    the column first, then change the setting.
+- The site's two older lists are the user's tests. Ignore them; don't delete them
+  unless asked.
+
+SharePoint Lists + Power Automate, standard connectors only. The full column-by-column
+design, views, flows and answers to the staff's questions are in
+`payroll-tickets-lists/DESIGN.md`. In short:
+
+- `Clients`: one row per client, loaded from `local/clients.csv`.
+  - Frequency allows several values (one ticket per schedule).
+  - Yes/No switches for the client-specific steps.
+  - Rich-text standing notes.
+- `PayrollTickets`: one row per client, per schedule, per pay period, created each
+  Monday by a flow.
+  - A unique `TicketKey` stops duplicates.
+  - Timecards in / payroll done / billing done checkboxes.
+  - Client-specific steps as To do / Done / N/A.
+  - Status: Open, Complete, or No payroll this period.
+- `ClientEmployees`: waiting on the employee lists the user will provide.
+- `TicketTimesheets`: comes with the hours page later.
+- The `.xlsx` files in `payroll-tickets-lists/` are the older layouts; DESIGN.md
+  supersedes them.
 
 **Open questions for the user:**
-- Are any clients paid monthly rather than biweekly? If so, use the `Frequency` column.
-- Can the user create a SharePoint site or lists in the tenant, or do they need to ask IT?
+- Can they create a SharePoint site and lists in their Microsoft 365 tenant, or do they
+  need to ask IT? And how should the lists be created: a provisioning script, or built
+  together in the browser?
+- Semi-monthly clients are paid on the 5th and 20th. Which days does each period cover?
+- Should the monthly Council-on-Aging report be its own monthly ticket?
+- Confirm the guesses in `local/client-steps.json` (checklist shorthand and a truncated line).
 
 ## Next steps (in order)
 
-1. Deploy the Google web app with real `CONFIG.CLIENTS`, generate client links, and send a
-   test submission from a private window.
-2. Create the SharePoint lists above and fill in real clients and employees.
-3. Build flow 1 (ticket creation) and flow 2 (CSV email import).
-4. Canvas App Stage 2: point `cmbEmployee` at `ClientEmployees`, and make Submit write to
-   `TicketTimesheets`.
+1. Create the `Clients` and `PayrollTickets` lists and views in the user's tenant, and
+   import `local/clients.csv`.
+2. Build flow 1 (weekly ticket creation), then the optional reminder flow.
+3. `ClientEmployees`, once the user sends the employee lists.
+4. Later: deploy the Google hours page, build `TicketTimesheets` and flow 2 (CSV email
+   import), and Canvas App Stage 2.
 
 ## Setup on a new machine
 
@@ -137,3 +243,28 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt   # only for 
 
 For Claude Code, install the `canvas-apps` plugin from the `power-platform-skills`
 marketplace. `.claude/settings.json` already enables it.
+
+## Payroll Tickets "To do" view (default)
+
+- Open tickets grouped by company, one row per ticket: urgency stripe (red = timecards overdue,
+  amber = payday within 2 days, green = ready to close), title (opens the ticket), due / pay dates,
+  assignee, and click-to-tick step labels plus a "Mark complete" button.
+- Layout is `payroll-tickets-lists/formatting/todo-view.json` (built by `tools/build-formatting.js`).
+  The view must include Status and every step column, or ticks silently don't save.
+- View JSON is stored as XML: it must not contain `&` or `<` (the generator uses nested ifs and `>`).
+- The classic ViewEdit.aspx OK button failed to save; view fields and the formatter were set through
+  the site REST API (`viewfields/addviewfield`, MERGE `CustomFormatter`) from a signed-in browser.
+- Tick tested on ticket 1 and reverted. Left: widen the Checklist column in other views.
+- Ticket form (display/new/edit): the step columns, Period end, Ticket key and Checklist are hidden
+  through the form's Edit columns panel (New item panel → form icon → Edit columns). Steps are ticked
+  in the To do view; the columns still exist and the flow still fills them. Period start and Pay date
+  are required, so they can't be hidden. Custom form JSON and the REST field-link route did not work.
+- Ticket form: each client-specific step (ACH, JobCostReport, Report, SendPreviewForApproval,
+  SendForApproval, CouncilOnAgingReport, ReportSent) has a conditional formula
+  `=if([$Field] != 'N/A', true, false)` (Edit columns → field options → Edit conditional formula),
+  so N/A steps are hidden. Timecards in, Payroll done and Billing done always show.
+- To do row also shows client Contact, Phone and Report delivery (lookup projections `Client_x003a_Contact`,
+  `Client_x003a_Phone`, `Report_x0020_delivery`; the last one was added with `addDependentLookupField`)
+  and a "No payroll this period" button (sets Status to that choice, which leaves the Open filter).
+- Staff checklist docx is checked against the Clients data; open question: BVTI "send preview" (the source
+  line is cut off). The staff answers and user guide are in `local/Staff-Response-and-Guide.md` (names clients, so local only).
